@@ -7,4 +7,11 @@ An HF's Smolagent to automate molecular dynamics simulations using GROMACS.
 #### What is Hugging Face?
 Seriuosly? If you are among the few dozens people in the world that have never heard of Hugging Face 🤗, please go discover that ecosystem [here](https://huggingface.co) before moving on with this repo.  
 #### What's in this repo?
-This repo provides a concrete example implementation of an AI agent using a lightweight library and an Open Source Small Language Model. The final implementation of this agent would automate setup, simulation and analysis tasks performed through the Gromacs tool.   
+This repo provides a concrete example implementation of an AI agent that uses a lightweight library and an Open Source Small Language Model. The final implementation of this agent would automate setup, simulation and analysis tasks performed through the Gromacs tool.   
+## Custom Tools
+To date, the following tools have been implemented:      
+* *is_gromacs_installed*: to verify that a local Gromacs instance is available and running.
+* *convert_pdb_to_gromacs*: to convert a .pdb file into .gro format.
+* *create_index_file*: to create an index file for a given PDB file.
+* *prepare_simulation_files*: to create the mandatory files for a Gromacs simulation (atom coordinates, topologies and MD parameters) starting from a given PDB file.
+

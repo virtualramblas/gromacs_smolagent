@@ -1,5 +1,6 @@
 # gromacs_smolagent
 An HF's Smolagent to automate molecular dynamics simulations using GROMACS.  
+![Gromacs Smolagent Landing Image](images/landing_image.png)
 #### What is Gromacs?
 [Gromacs](https://www.gromacs.org) is a popular, free and open-source software suite for high-performance molecular dynamics and output analysis.  
 #### What is Smolagents?

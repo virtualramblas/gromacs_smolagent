@@ -131,3 +131,34 @@ def prepare_and_solvate_box(gro_file: str, top_file: str, output_prefix: str, bo
     except subprocess.CalledProcessError as e:
         print(f"Error solvating the system: {e}")
         return False
+    
+@tool
+def add_ions(gro_file: str, top_file: str, output_prefix: str, concentration: float = 0.15) -> bool:
+    """Adds ions to a solvated system using Gromacs.
+
+    Args:
+        gro_file: Path to the input GRO file.
+        top_file: Path to the input topology file.
+        output_prefix: Prefix for the output files.
+        concentration: The desired ion concentration in M.
+
+    Returns:
+        True if ion addition is successful, False otherwise.
+    """
+
+    ionized_gro_file = f"{output_prefix}_ionized.gro"
+    is_success = False
+    try:
+        subprocess.run(['touch', 'ions.mdp'], check=True)
+        subprocess.run(['gmx', 'grompp', '-f', 'ions.mdp', '-c', gro_file, '-p', top_file, '-o', 'ions.tpr'], check=True)
+        print("Successfully completed the grompp execution.")
+        ps = subprocess.Popen(('echo', 'SOL'), stdout=subprocess.PIPE)
+        output = subprocess.check_output(['gmx', 'genion', '-s', 'ions.tpr', '-o', ionized_gro_file, '-p', top_file, '-neutral', '-conc', str(concentration)], stdin=ps.stdout)
+        print(f"Successfully added ions. Output: {ionized_gro_file}")
+        is_success = True
+    except FileNotFoundError:
+        print("Error: 'gmx' command not found. Make sure Gromacs is installed and in your PATH.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error adding ions: {e}")
+    finally:
+        return is_success

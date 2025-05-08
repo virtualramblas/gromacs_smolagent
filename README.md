@@ -3,6 +3,8 @@ An HF's Smolagent to automate molecular dynamics simulations using GROMACS.
 ![Gromacs Smolagent Landing Image](images/landing_image.png)
 #### What is Gromacs?
 [Gromacs](https://www.gromacs.org) is a popular, free and open-source software suite for high-performance molecular dynamics and output analysis.  
+#### What is molecular dynamics?
+Molecular dynamics (MD) is a computer simulation technique used to study the physical movements of atoms and molecules over time. It simulates the dynamics of a system by integrating Newton's laws of motion to track the trajectory of each atom, revealing how the system evolves. MD simulations are widely used to study the dynamics of biomolecules like proteins, in Drug Discovery to understand how drugs interact with their target molecules, in Material Science to study the properties of materials at the atomic level, including their structure, dynamics, and behavior under various condition, and to model chemical reactions.  
 #### What is Smolagents?
 [Smolagents](https://github.com/huggingface/smolagents) is a barebones library (around 1000 lines of code) from Hugging Face for agents that think in Python code. It is model-agnostic, tool-agnostic, and fully integrated with anything you can find in the Hugging Face's Hub.  
 #### What is Hugging Face?
@@ -14,5 +16,9 @@ To date, the following tools have been implemented:
 * *is_gromacs_installed*: to verify that a local Gromacs instance is available and running.
 * *convert_pdb_to_gromacs*: to convert a .pdb file into .gro format.
 * *create_index_file*: to create an index file for a given PDB file.
-* *prepare_simulation_files*: to create the mandatory files for a Gromacs simulation (atom coordinates, topology and MD parameters) starting from a given PDB file.
+* *prepare_simulation_files*: to create the mandatory files for a Gromacs simulation (atom coordinates, topology and MD parameters) starting from a given PDB file.  
+* *prepare_and_solvate_box*: to prepare a simulation box and solvate it.  
+* *add_ions*: to add ions to the simulation box.  
+## Warning
+This is still a work in progress and doesn't cover yet all the phases of MD simulations: expect multiple changes to the code in the incoming weeks. Any constructive feedback is welcome.  
 

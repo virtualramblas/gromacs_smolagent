@@ -1,7 +1,7 @@
 import sys
 import torch
 from smolagents import CodeAgent, TransformersModel
-from gmxtools import is_gromacs_installed, convert_pdb_to_gromacs, create_index_file, prepare_simulation_files
+from gmxtools import is_gromacs_installed, convert_pdb_to_gromacs, create_index_file, prepare_simulation_files, prepare_and_solvate_box
 
 def main():
     if len(sys.argv) != 2:
@@ -14,7 +14,9 @@ def main():
                                 torch_dtype=torch.float16,
                                 temperature=0.1)
 
-        custom_tools = [is_gromacs_installed, convert_pdb_to_gromacs, create_index_file, prepare_simulation_files]
+        custom_tools = [is_gromacs_installed, convert_pdb_to_gromacs, 
+                        create_index_file, prepare_simulation_files,
+                        prepare_and_solvate_box]
         agent = CodeAgent(tools=custom_tools, model=model,
                         additional_authorized_imports=[],
                         verbosity_level=2, max_steps=4)
@@ -23,10 +25,11 @@ def main():
         user_tasks = [
             "Check if Gromacs in installed.",
             f"Convert the {pdb_file_path} file into Gromacs format.",
-            f"Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is amber99sb-ildn."
+            f"Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is amber99sb-ildn.",
+            f"Prepare a simulation box starting from the {pdb_file_path} file. Force field is amber99sb-ildn. Simulation files must keep the same name as for the PDB file."
         ]
         
-        agent.run(user_tasks[2])
+        agent.run(user_tasks[3])
 
 if __name__ == '__main__':
     main()

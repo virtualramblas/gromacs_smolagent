@@ -90,7 +90,7 @@ def prepare_simulation_files(pdb_file: str, output_prefix: str, force_field: str
 
     gro_file = f"{output_prefix}.gro"
     itp_file = f"{output_prefix}.itp"
-    top_file = f"{output_prefix}_newbox.top"
+    top_file = f"{output_prefix}.top"
 
     is_success = False
     try:
@@ -103,3 +103,31 @@ def prepare_simulation_files(pdb_file: str, output_prefix: str, force_field: str
         print(f"Error preparing files: {e}")
     finally:
         return is_success
+    
+@tool
+def prepare_and_solvate_box(gro_file: str, top_file: str, output_prefix: str, box_size: float = 1.0) -> bool:
+    """Prepares and solvates a simulation box using Gromacs.
+
+    Args:
+        gro_file: Path to the input GRO file.
+        top_file: Path to the input topology file.
+        output_prefix: Prefix for the output files.
+        box_size: The size of the box in nm.
+
+    Returns:
+        True if the box preparation and solvation are successful, False otherwise.
+    """
+
+    solvated_gro_file = f"{output_prefix}_solv.gro"
+    
+    try:
+      subprocess.run(['gmx', 'editconf', '-f', gro_file, '-o', solvated_gro_file, '-c', '-d', str(box_size), '-bt', 'cubic'], check=True)
+      subprocess.run(['gmx', 'solvate', '-cp', solvated_gro_file, '-cs', 'spc216.gro', '-o', solvated_gro_file, '-p', top_file], check=True)
+      print(f"Successfully solvated the system. Output: {solvated_gro_file}")
+      return True
+    except FileNotFoundError:
+        print("Error: 'gmx' command not found. Make sure Gromacs is installed and in your PATH.")
+        return False
+    except subprocess.CalledProcessError as e:
+        print(f"Error solvating the system: {e}")
+        return False

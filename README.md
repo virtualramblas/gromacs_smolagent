@@ -14,5 +14,5 @@ To date, the following tools have been implemented:
 * *is_gromacs_installed*: to verify that a local Gromacs instance is available and running.
 * *convert_pdb_to_gromacs*: to convert a .pdb file into .gro format.
 * *create_index_file*: to create an index file for a given PDB file.
-* *prepare_simulation_files*: to create the mandatory files for a Gromacs simulation (atom coordinates, topologies and MD parameters) starting from a given PDB file.
+* *prepare_simulation_files*: to create the mandatory files for a Gromacs simulation (atom coordinates, topology and MD parameters) starting from a given PDB file.
 

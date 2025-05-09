@@ -1,5 +1,6 @@
 # gromacs_smolagent
 An HF's Smolagent to automate molecular dynamics simulations using GROMACS.  
+  
 ![Gromacs Smolagent Landing Image](images/landing_image.png)
 #### What is Gromacs?
 [Gromacs](https://www.gromacs.org) is a popular, free and open-source software suite for high-performance molecular dynamics and output analysis.  
@@ -12,7 +13,7 @@ Seriuosly? If you are among the few dozens people in the world that have never h
 #### What's in this repo?
 This repo provides a concrete example implementation of an AI agent that uses a lightweight library and an Open Source Small Language Model. The final implementation of this agent would automate setup, simulation and analysis tasks performed through the Gromacs tool.   
 ## Custom Tools
-To date, the following tools have been implemented:      
+To date, the following tools for the Agent have been implemented:      
 * *is_gromacs_installed*: to verify that a local Gromacs instance is available and running.
 * *convert_pdb_to_gromacs*: to convert a .pdb file into .gro format.
 * *create_index_file*: to create an index file for a given PDB file.
@@ -21,4 +22,6 @@ To date, the following tools have been implemented:
 * *add_ions*: to add ions to the simulation box.  
 ## Warning
 This is still a work in progress and doesn't cover yet all the phases of MD simulations: expect multiple changes to the code in the incoming weeks. Any constructive feedback is welcome.  
+## Usage
+Coming soon.  
 

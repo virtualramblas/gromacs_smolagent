@@ -23,5 +23,21 @@ To date, the following tools for the Agent have been implemented:
 ## Warning
 This is still a work in progress and doesn't cover yet all the phases of MD simulations: expect multiple changes to the code in the incoming weeks. Any constructive feedback is welcome.  
 ## Usage
+This project supports only Linux and MacOS. It isn't tested on Windows nor WSL (Windows Subsystem for Linux).  
+#### Prerequisites
+The software in the list below is mandatory before installing and using this Agent:
+* Gromacs. Please follow the installation instructions for Linux or MacOS in the official documentation. The Agent has been tested on the Gromacs 2025.1 release.
+* Python 3.12 or later.   
+#### Installation
+Just clone this repo locally:  
+```
+git clone https://github.com/virtualramblas/gromacs_smolagent.git  
+cd gromacs_smolagents
+```  
+#### Virtual environment setup.
+The Python requirements for this Agent are listed in the [requirements.txt](./requirements.txt) file. Whatever package manager you feel more confortable with, please ensure all the requirements have been installed before the first execution of the code.  
+#### CLI Execution
+Coming soon.  
+#### UI
 Coming soon.  
 

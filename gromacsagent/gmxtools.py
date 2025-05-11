@@ -1,3 +1,4 @@
+import os
 import subprocess
 from smolagents import tool
 
@@ -26,12 +27,13 @@ def is_gromacs_installed() -> bool:
     return False
   
 @tool
-def convert_pdb_to_gromacs(pdb_file: str, gro_file: str) -> None:
+def convert_pdb_to_gromacs(pdb_file: str, gro_file: str, workspace:str = ".") -> None:
     """Converts a PDB file to a GRO file using Gromacs' editconf tool.
 
     Args:
         pdb_file: Path to the input PDB file.
         gro_file: Path to the output GRO file.
+        workspace: The directory where to save the converted file.
 
     Returns:
         True if the file has been successfully converted, False otherwise.
@@ -39,7 +41,7 @@ def convert_pdb_to_gromacs(pdb_file: str, gro_file: str) -> None:
 
     is_success = False
     try:
-        subprocess.run(['gmx', 'editconf', '-f', pdb_file, '-o', gro_file, '-c'], check=True)
+        subprocess.run(['gmx', 'editconf', '-f', pdb_file, '-o', os.path.join(workspace, gro_file), '-c'], check=True)
         print(f"Successfully converted {pdb_file} to {gro_file}")
         is_success = True
     except FileNotFoundError:
@@ -50,12 +52,13 @@ def convert_pdb_to_gromacs(pdb_file: str, gro_file: str) -> None:
         return is_success
 
 @tool
-def create_index_file(pdb_file: str, index_file: str) -> None:
+def create_index_file(pdb_file: str, index_file: str, workspace:str = ".") -> None:
     """Creates an index file for a given PDB file using Gromacs.
 
     Args:
         pdb_file: Path to the input PDB file.
         index_file: Path to the output index file.
+        workspace: The directory where to save the index file.
 
     Returns:
         True if the index files has been successfully created, False otherwise.
@@ -64,7 +67,8 @@ def create_index_file(pdb_file: str, index_file: str) -> None:
     is_success = False
     try:
         ps = subprocess.Popen(('echo', '-e', '"q \n"'), stdout=subprocess.PIPE)
-        output = subprocess.check_output(('gmx', 'make_ndx', '-f', pdb_file, '-o', index_file+'.ndx'), stdin=ps.stdout)
+        output = subprocess.check_output(('gmx', 'make_ndx', '-f', pdb_file, 
+                                          '-o', os.oath.join(workspace, index_file+'.ndx')), stdin=ps.stdout)
         print(f"Successfully created index file: {index_file}")
         is_success = True
     except FileNotFoundError:
@@ -75,7 +79,7 @@ def create_index_file(pdb_file: str, index_file: str) -> None:
         return is_success
 
 @tool
-def prepare_simulation_files(pdb_file: str, output_prefix: str, force_field: str='amber99sb-ildn', water_model:str = 'tip3p') -> bool:
+def prepare_simulation_files(pdb_file: str, output_prefix: str, force_field: str='amber99sb-ildn', water_model:str = 'tip3p', workspace:str = ".") -> bool:
     """Prepares necessary files for a Gromacs simulation from a PDB file.
 
     Args:
@@ -83,6 +87,7 @@ def prepare_simulation_files(pdb_file: str, output_prefix: str, force_field: str
         output_prefix: Prefix for the output files.
         force_field: The force field to use.
         water_model: The water model to use.
+        workspace: The directory where to save any created or updated file.
 
     Returns:
       True if the simulation files have been successfully created, False otherwise.
@@ -94,7 +99,11 @@ def prepare_simulation_files(pdb_file: str, output_prefix: str, force_field: str
 
     is_success = False
     try:
-        subprocess.run(['gmx', 'pdb2gmx', '-f', pdb_file, '-o', gro_file, '-i', itp_file, '-p', top_file, '-ff', force_field, '-ignh', '-heavyh', '-water', water_model], check=True)
+        subprocess.run(['gmx', 'pdb2gmx', '-f', pdb_file, 
+                        '-o', os.path.join(workspace, gro_file), 
+                        '-i', os.path.join(workspace, itp_file), 
+                        '-p', os.path.join(workspace, top_file), 
+                        '-ff', force_field, '-ignh', '-heavyh', '-water', water_model], check=True)
         print(f"Successfully prepared files for GMX.")
         is_success = True
     except FileNotFoundError:
@@ -105,7 +114,7 @@ def prepare_simulation_files(pdb_file: str, output_prefix: str, force_field: str
         return is_success
     
 @tool
-def prepare_and_solvate_box(gro_file: str, top_file: str, output_prefix: str, box_size: float = 1.0) -> bool:
+def prepare_and_solvate_box(gro_file: str, top_file: str, output_prefix: str, box_size: float = 1.0, workspace:str = ".") -> bool:
     """Prepares and solvates a simulation box using Gromacs.
 
     Args:
@@ -113,6 +122,7 @@ def prepare_and_solvate_box(gro_file: str, top_file: str, output_prefix: str, bo
         top_file: Path to the input topology file.
         output_prefix: Prefix for the output files.
         box_size: The size of the box in nm.
+        workspace: The directory where to save any created or updated file.
 
     Returns:
         True if the box preparation and solvation are successful, False otherwise.
@@ -121,8 +131,14 @@ def prepare_and_solvate_box(gro_file: str, top_file: str, output_prefix: str, bo
     solvated_gro_file = f"{output_prefix}_solv.gro"
     
     try:
-      subprocess.run(['gmx', 'editconf', '-f', gro_file, '-o', solvated_gro_file, '-c', '-d', str(box_size), '-bt', 'cubic'], check=True)
-      subprocess.run(['gmx', 'solvate', '-cp', solvated_gro_file, '-cs', 'spc216.gro', '-o', solvated_gro_file, '-p', top_file], check=True)
+      subprocess.run(['gmx', 'editconf', 
+                      '-f', os.path.join(workspace, gro_file), 
+                      '-o', os.path.join(workspace, solvated_gro_file), 
+                      '-c', '-d', str(box_size), '-bt', 'cubic'], check=True)
+      subprocess.run(['gmx', 'solvate', 
+                      '-cp', os.path.join(workspace, solvated_gro_file), '-cs', 'spc216.gro', 
+                      '-o', os.path.join(workspace, solvated_gro_file), 
+                      '-p', os.path.join(workspace, top_file)], check=True)
       print(f"Successfully solvated the system. Output: {solvated_gro_file}")
       return True
     except FileNotFoundError:
@@ -133,7 +149,7 @@ def prepare_and_solvate_box(gro_file: str, top_file: str, output_prefix: str, bo
         return False
     
 @tool
-def add_ions(gro_file: str, top_file: str, output_prefix: str, concentration: float = 0.15) -> bool:
+def add_ions(gro_file: str, top_file: str, output_prefix: str, concentration: float = 0.15, workspace:str = ".") -> bool:
     """Adds ions to a solvated system using Gromacs.
 
     Args:
@@ -141,6 +157,7 @@ def add_ions(gro_file: str, top_file: str, output_prefix: str, concentration: fl
         top_file: Path to the input topology file.
         output_prefix: Prefix for the output files.
         concentration: The desired ion concentration in M.
+        workspace: The directory where to save any created or updated file.
 
     Returns:
         True if ion addition is successful, False otherwise.
@@ -149,11 +166,18 @@ def add_ions(gro_file: str, top_file: str, output_prefix: str, concentration: fl
     ionized_gro_file = f"{output_prefix}_ionized.gro"
     is_success = False
     try:
-        subprocess.run(['touch', 'ions.mdp'], check=True)
-        subprocess.run(['gmx', 'grompp', '-f', 'ions.mdp', '-c', gro_file, '-p', top_file, '-o', 'ions.tpr'], check=True)
+        subprocess.run(['touch', os.path.join(workspace, 'ions.mdp')], check=True)
+        subprocess.run(['gmx', 'grompp', '-f', os.path.join(workspace, 'ions.mdp'), 
+                        '-c', os.path.join(workspace, gro_file), 
+                        '-p', os.path.join(workspace, top_file), 
+                        '-o', os.path.join(workspace, 'ions.tpr')], check=True)
         print("Successfully completed the grompp execution.")
         ps = subprocess.Popen(('echo', 'SOL'), stdout=subprocess.PIPE)
-        output = subprocess.check_output(['gmx', 'genion', '-s', 'ions.tpr', '-o', ionized_gro_file, '-p', top_file, '-neutral', '-conc', str(concentration)], stdin=ps.stdout)
+        output = subprocess.check_output(['gmx', 'genion', 
+                                          '-s', os.path.join(workspace, 'ions.tpr'), 
+                                          '-o', os.path.join(workspace, ionized_gro_file), 
+                                          '-p', os.path.join(workspace, top_file), 
+                                          '-neutral', '-conc', str(concentration)], stdin=ps.stdout)
         print(f"Successfully added ions. Output: {ionized_gro_file}")
         is_success = True
     except FileNotFoundError:

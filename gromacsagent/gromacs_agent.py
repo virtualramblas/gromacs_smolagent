@@ -12,6 +12,7 @@ def main():
                         default="tip3p", help="The water model to use.")
     parser.add_argument("-box_size", type=float, default=1.0, help="The size of the simulation box.")
     parser.add_argument("-concentration", type=float, default=0.15, help="The total salt concentration expressed in mol/L")
+    parser.add_argument("-workspace", type=str, default=".", help="The directory where to store all the files for a simulation.")
 
     args = parser.parse_args()
     
@@ -31,11 +32,13 @@ def main():
     
     pdb_file_path = args.pdb_file
     force_field = args.force_field
+    water_model = args.water_model
+    workspace = args.workspace
     user_tasks = [
         "Check if Gromacs in installed.",
-        f"Convert the {pdb_file_path} file into Gromacs format.",
-        f"Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is {force_field}.",
-        f"Prepare a simulation box starting from the {pdb_file_path} file. Force field is {force_field}. Simulation files must keep the same name as for the PDB file."
+        f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
+        f"Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
+        f"Prepare a simulation box starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. Simulation files must keep the same name as for the PDB file. The Workspace is {workspace}"
     ]
     
     agent.run(user_tasks[0])

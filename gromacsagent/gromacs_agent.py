@@ -13,6 +13,10 @@ def main():
     parser.add_argument("-box_size", type=float, default=1.0, help="The size of the simulation box.")
     parser.add_argument("-concentration", type=float, default=0.15, help="The total salt concentration expressed in mol/L")
     parser.add_argument("-workspace", type=str, default=".", help="The directory where to store all the files for a simulation.")
+    parser.add_argument("-task", type=str,  
+                        choices=['pulse_check', 'conversion_to_gro', 'prepare_files',
+                                 'generate_box', 'add_ions'], 
+                        default="pulse_check", help="The task for the agent.")
 
     args = parser.parse_args()
     
@@ -34,14 +38,16 @@ def main():
     force_field = args.force_field
     water_model = args.water_model
     workspace = args.workspace
-    user_tasks = [
-        "Check if Gromacs in installed.",
-        f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
-        f"Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
-        f"Prepare a simulation box starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. Simulation files must keep the same name as for the PDB file. The Workspace is {workspace}"
-    ]
-    
-    agent.run(user_tasks[0])
+    task = args.task
+    user_tasks_dict = {
+        "pulse_check": "Check if Gromacs in installed.",
+        "conversion_to_gro": f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
+        "prepare_files": f"Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
+        "generate_box": f"Prepare a simulation box starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. Simulation files must keep the same name as for the PDB file. The Workspace is {workspace}",
+        "add_ions": f"Prepare a simulation box starting from the {pdb_file_path} file and add ions once created. Force field is {force_field}. The water model is {water_model}. Any created file must keep the same prefix as for the PDB file. The Workspace is {workspace}"
+    }
+
+    agent.run(user_tasks_dict[task])
 
 if __name__ == '__main__':
     main()

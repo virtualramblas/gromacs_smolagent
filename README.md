@@ -35,9 +35,45 @@ git clone https://github.com/virtualramblas/gromacs_smolagent.git
 cd gromacs_smolagents
 ```  
 #### Virtual environment setup.
-The Python requirements for this Agent are listed in the [requirements.txt](./requirements.txt) file. Whatever package manager you feel more confortable with, please ensure all the requirements have been installed before the first execution of the code.  
+The Python requirements for this Agent are listed in the [requirements.txt](./requirements.txt) file. Whatever package manager you feel more confortable with, please ensure that all the requirements have been installed before the first execution of the code. To date, this tool has been built on the following:  
+* Smolagents
+* PyTorch
+* Transformers
+* Accelerate
+#### Small Language Model (SLM) used
+The model that the Agent uses is [Qwen 2.5 3B Instruct](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct), in FP 16 format. To date this is the one that it's providing the best performance. Optimized and compressed versions of this model are under evaluation. Also other models would be evaluated in the future. The current SLM model requires hardware acceleration (NVIDA GPU or Apple Silicon) with minumum 8 GB VRAM. 16 GB VRAM preferable for a smoother experience. The model checkpoints are automatically downloaded from the HF's Hub at the firts tool execution. They are then cached in the local machine (no need to be connected to the web for any further run).
 #### CLI Execution
-Coming soon.  
+The tool can be executed from the CLI. The ```gromacs_agent.py``` script is the enrty point for execution. In its minimal form it can be executed as follows:  
+```
+python gromacs_agent.py -pdb_file <path_to_the_pdb_file>
+```
+The ```-h``` option prints to the standard output the help related to the full set of options for the script:  
+```
+python gromacs_agent.py -h                                                              
+usage: gromacs_agent.py [-h] -pdb_file PDB_FILE [-force_field FORCE_FIELD]
+                        [-water_model {none,spc,spce,tip3p,tip4p,tip5p,tips3p}]
+                        [-box_size BOX_SIZE] [-concentration CONCENTRATION]
+                        [-workspace WORKSPACE]
+                        [-task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions}]
+
+An AI Agent that handles Gromacs workflows.
+
+options:
+  -h, --help            show this help message and exit
+  -pdb_file PDB_FILE    The path and name of the starting PDB file.
+  -force_field FORCE_FIELD
+                        The force field to use when preparing the simulation
+                        files.
+  -water_model {none,spc,spce,tip3p,tip4p,tip5p,tips3p}
+                        The water model to use.
+  -box_size BOX_SIZE    The size of the simulation box.
+  -concentration CONCENTRATION
+                        The total salt concentration expressed in mol/L
+  -workspace WORKSPACE  The directory where to store all the files for a
+                        simulation.
+  -task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions}
+                        The task for the agent.
+```
 #### UI
 Coming soon.  
 

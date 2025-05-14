@@ -17,7 +17,7 @@ To date, the following tools for the Agent have been implemented:
 * *is_gromacs_installed*: to verify that a local Gromacs instance is available and running.
 * *convert_pdb_to_gromacs*: to convert a .pdb file into .gro format.
 * *create_index_file*: to create an index file for a given PDB file.
-* *prepare_simulation_files*: to create the mandatory files for a Gromacs simulation (atom coordinates, topology and MD parameters) starting from a given PDB file.  
+* *prepare_system_files*: to create the mandatory files for a Gromacs simulation (atom coordinates, topology and MD parameters) starting from a given PDB file.  
 * *prepare_and_solvate_box*: to prepare a simulation box and solvate it.  
 * *add_ions*: to add ions to the simulation box.  
 ## Warning
@@ -41,7 +41,11 @@ The Python requirements for this Agent are listed in the [requirements.txt](./re
 * Transformers
 * Accelerate
 #### Small Language Model (SLM) used
-The model that the Agent uses is [Qwen 2.5 3B Instruct](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct), in FP 16 format. To date this is the one that it's providing the best performance. Optimized and compressed versions of this model are under evaluation. Also other models would be evaluated in the future. The current SLM model requires hardware acceleration (NVIDA GPU or Apple Silicon) with minumum 8 GB VRAM. 16 GB VRAM preferable for a smoother experience. The model checkpoints are automatically downloaded from the HF's Hub at the firts tool execution. They are then cached in the local machine (no need to be connected to the web for any further run).
+The models that the Agent can use are:  
+* [Qwen 2.5 3B Instruct](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct), in FP 16 format.  
+* [Qwen 2.5 1.5B Instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct), in FP 16 format.  
+  
+To date, these are those providing the best performance. The evaluation process of other models is still ongoing. The Qwen 2.5 models above require hardware acceleration (NVIDA GPU or Apple Silicon) with minumum 8 GB VRAM. 16 GB VRAM preferable for the 3B version, to have a smoother experience. The model checkpoints are automatically downloaded from the HF's Hub at the firts tool execution. They are then cached in the local machine (no need to be connected to the web for any further run, when sticking to the same model).
 #### CLI Execution
 The tool can be executed from the CLI. The ```gromacs_agent.py``` script is the enrty point for execution. In its minimal form it can be executed as follows:  
 ```

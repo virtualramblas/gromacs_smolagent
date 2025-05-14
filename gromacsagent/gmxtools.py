@@ -79,7 +79,7 @@ def create_index_file(pdb_file: str, index_file: str, workspace:str = ".") -> bo
         return is_success
 
 @tool
-def prepare_simulation_files(pdb_file: str, output_prefix: str, force_field: str='amber99sb-ildn', water_model:str = 'tip3p', workspace:str = ".") -> bool:
+def prepare_system_files(pdb_file: str, output_prefix: str, force_field: str='amber99sb-ildn', water_model:str = 'tip3p', workspace:str = ".") -> bool:
     """Prepares necessary files for a Gromacs simulation from a PDB file.
 
     Args:
@@ -118,10 +118,10 @@ def prepare_and_solvate_box(gro_file: str, top_file: str, output_prefix: str, bo
     """Prepares and solvates a simulation box using Gromacs.
 
     Args:
-        gro_file: Path to the input GRO file.
-        top_file: Path to the input topology file.
+        gro_file: Path to the input GRO (.gro) file.
+        top_file: Path to the input topology (.top) file.
         output_prefix: Prefix for the output files.
-        box_size: The size of the box in nm.
+        box_size: The size of the box in nm. It must be at least 1.0.
         workspace: The directory where to save any created or updated file.
 
     Returns:

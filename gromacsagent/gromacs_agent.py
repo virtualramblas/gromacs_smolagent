@@ -1,7 +1,7 @@
 import argparse
 import torch
 from smolagents import CodeAgent, TransformersModel
-from gmxtools import is_gromacs_installed, convert_pdb_to_gromacs, create_index_file, prepare_simulation_files, prepare_and_solvate_box, add_ions
+from gmxtools import is_gromacs_installed, create_index_file, prepare_system_files, prepare_and_solvate_box, add_ions
 
 def main():
     parser = argparse.ArgumentParser(description="An AI Agent that handles Gromacs workflows.")
@@ -17,21 +17,25 @@ def main():
                         choices=['pulse_check', 'conversion_to_gro', 'prepare_files',
                                  'generate_box', 'add_ions'], 
                         default="pulse_check", help="The task for the agent.")
-
+    parser.add_argument("-model", type=str,  
+                        choices=['Qwen/Qwen2.5-3B-Instruct', 'Qwen/Qwen2.5-1.5B-Instruct'], 
+                        default="Qwen/Qwen2.5-3B-Instruct", help="The Small Language Model to be used by the agent.")
+    
     args = parser.parse_args()
     
-    model_id = 'Qwen/Qwen2.5-3B-Instruct'
+    model_id = args.model
     model = TransformersModel(model_id,
                             device_map="auto",
                             max_new_tokens=1000,
                             torch_dtype=torch.float16,
+                            do_sample=True,
                             temperature=0.1)
 
-    custom_tools = [is_gromacs_installed, convert_pdb_to_gromacs, 
-                    create_index_file, prepare_simulation_files,
+    custom_tools = [is_gromacs_installed, 
+                    create_index_file, prepare_system_files,
                     prepare_and_solvate_box, add_ions]
     agent = CodeAgent(tools=custom_tools, model=model,
-                    additional_authorized_imports=[],
+                    additional_authorized_imports=[''],
                     verbosity_level=2, max_steps=4)
     
     pdb_file_path = args.pdb_file
@@ -47,7 +51,17 @@ def main():
         "add_ions": f"Prepare a simulation box starting from the {pdb_file_path} file and add ions once created. Force field is {force_field}. The water model is {water_model}. Any created file must keep the same prefix as for the PDB file. The Workspace is {workspace}"
     }
 
-    agent.run(user_tasks_dict[task])
+    #tast_template = "Use only the provided function decorated with @tools. Don't try to import any Python package."
+    task_template = f"""
+        You have smolagents tools at your disposal to solve the following coding task:
+        {user_tasks_dict[task]}
+Follow these rules regarding tool calls:
+1. ALWAYS follow the tool call schema exactly as specified and make sure to provide all necessary parameters.
+2. ALWAYS call only the provided tools.
+3. NEVER do unhautorized Python imports.
+4. Provide only valid Python code to the answer.
+    """
+    agent.run(task_template)
 
 if __name__ == '__main__':
     main()

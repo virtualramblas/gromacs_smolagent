@@ -59,6 +59,7 @@ usage: gromacs_agent.py [-h] -pdb_file PDB_FILE [-force_field FORCE_FIELD]
                         [-box_size BOX_SIZE] [-concentration CONCENTRATION]
                         [-workspace WORKSPACE]
                         [-task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions}]
+                        [-model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct}]
 
 An AI Agent that handles Gromacs workflows.
 
@@ -77,6 +78,8 @@ options:
                         simulation.
   -task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions}
                         The task for the agent.
+  -model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct}
+                        The Small Language Model to be used by the agent.
 ```
 #### UI
 Coming soon.  

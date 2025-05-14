@@ -51,7 +51,6 @@ def main():
         "add_ions": f"Prepare a simulation box starting from the {pdb_file_path} file and add ions once created. Force field is {force_field}. The water model is {water_model}. Any created file must keep the same prefix as for the PDB file. The Workspace is {workspace}"
     }
 
-    #tast_template = "Use only the provided function decorated with @tools. Don't try to import any Python package."
     task_template = f"""
         You have smolagents tools at your disposal to solve the following coding task:
         {user_tasks_dict[task]}

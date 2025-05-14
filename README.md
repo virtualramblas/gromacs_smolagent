@@ -21,7 +21,8 @@ To date, the following tools for the Agent have been implemented:
 * *prepare_and_solvate_box*: to prepare a simulation box and solvate it.  
 * *add_ions*: to add ions to the simulation box.  
 ## Warning
-This is still a work in progress and doesn't cover yet all the phases of MD simulations: expect multiple changes to the code in the incoming weeks. Any constructive feedback is welcome.  
+This is still a work in progress and doesn't cover yet all the phases of MD simulations (see the roadmap image below): expect multiple changes to the code in the incoming weeks. Any constructive feedback is welcome.  
+![Project_Roadmap](images/Gromacs_Smolagents_roadmap.png)
 ## Usage
 This project supports only Linux and MacOS. It isn't tested on Windows nor WSL (Windows Subsystem for Linux).  
 #### Prerequisites

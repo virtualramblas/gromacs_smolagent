@@ -52,12 +52,12 @@ def convert_pdb_to_gromacs(pdb_file: str, gro_file: str, workspace:str = ".") ->
         return is_success
 
 @tool
-def create_index_file(pdb_file: str, index_file: str, workspace:str = ".") -> None:
+def create_index_file(pdb_file: str, index_file: str, workspace:str = ".") -> bool:
     """Creates an index file for a given PDB file using Gromacs.
 
     Args:
         pdb_file: Path to the input PDB file.
-        index_file: Path to the output index file.
+        index_file: Name of the index file, without extension.
         workspace: The directory where to save the index file.
 
     Returns:
@@ -66,9 +66,9 @@ def create_index_file(pdb_file: str, index_file: str, workspace:str = ".") -> No
 
     is_success = False
     try:
-        ps = subprocess.Popen(('echo', '-e', '"q \n"'), stdout=subprocess.PIPE)
+        ps = subprocess.Popen(('echo', 'q'), stdout=subprocess.PIPE)
         output = subprocess.check_output(('gmx', 'make_ndx', '-f', pdb_file, 
-                                          '-o', os.oath.join(workspace, index_file+'.ndx')), stdin=ps.stdout)
+                                          '-o', os.path.join(workspace, index_file+'.ndx')), stdin=ps.stdout)
         print(f"Successfully created index file: {index_file}")
         is_success = True
     except FileNotFoundError:

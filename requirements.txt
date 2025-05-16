@@ -2,3 +2,4 @@ smolagents==1.14.0
 torch==2.7.0
 transformers==4.51.3
 accelerate==1.6.0
+matplotlib==3.10.3

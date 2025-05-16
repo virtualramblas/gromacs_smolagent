@@ -21,6 +21,7 @@ To date, the following tools for the Agent have been implemented:
 * *prepare_and_solvate_box*: to prepare a simulation box and solvate it.  
 * *add_ions*: to add ions to the simulation box.  
 * *gromacs_energy_minimization*: to setup and run energy minimization.  
+* *plot_edr_to_png*: to plot an energy file and save the chart in PNG format.  
 ## Warning
 This is still a work in progress and doesn't cover yet all the phases of MD simulations (see the roadmap image below): expect multiple changes to the code in the incoming weeks. Any constructive feedback is welcome.  
 ![Project_Roadmap](images/Gromacs_Smolagents_roadmap.png)
@@ -41,7 +42,8 @@ The Python requirements for this Agent are listed in the [requirements.txt](./re
 * Smolagents
 * PyTorch
 * Transformers
-* Accelerate
+* Accelerate  
+* Matplotlib  
 #### Small Language Model (SLM) used
 The models that the Agent can use are:  
 * [Qwen 2.5 3B Instruct](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct), in FP 16 format.  

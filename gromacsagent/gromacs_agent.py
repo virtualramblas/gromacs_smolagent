@@ -1,7 +1,7 @@
 import argparse
 import torch
 from smolagents import CodeAgent, TransformersModel
-from gmxtools import is_gromacs_installed, create_index_file, prepare_system_files, prepare_and_solvate_box, add_ions
+from gmxsystools import is_gromacs_installed, create_index_file, prepare_system_files, prepare_and_solvate_box, add_ions
 
 def main():
     parser = argparse.ArgumentParser(description="An AI Agent that handles Gromacs workflows.")

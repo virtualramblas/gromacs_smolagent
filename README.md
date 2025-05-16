@@ -20,6 +20,7 @@ To date, the following tools for the Agent have been implemented:
 * *prepare_system_files*: to create the mandatory files for a Gromacs simulation (atom coordinates, topology and MD parameters) starting from a given PDB file.  
 * *prepare_and_solvate_box*: to prepare a simulation box and solvate it.  
 * *add_ions*: to add ions to the simulation box.  
+* *gromacs_energy_minimization*: to setup and run energy minimization.  
 ## Warning
 This is still a work in progress and doesn't cover yet all the phases of MD simulations (see the roadmap image below): expect multiple changes to the code in the incoming weeks. Any constructive feedback is welcome.  
 ![Project_Roadmap](images/Gromacs_Smolagents_roadmap.png)

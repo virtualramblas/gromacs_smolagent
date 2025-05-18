@@ -2,6 +2,7 @@ import argparse
 import torch
 from smolagents import CodeAgent, TransformersModel
 from gmxsystools import is_gromacs_installed, create_index_file, prepare_system_files, prepare_and_solvate_box, add_ions
+from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png
 
 def main():
     parser = argparse.ArgumentParser(description="An AI Agent that handles Gromacs workflows.")
@@ -15,7 +16,8 @@ def main():
     parser.add_argument("-workspace", type=str, default=".", help="The directory where to store all the files for a simulation.")
     parser.add_argument("-task", type=str,  
                         choices=['pulse_check', 'conversion_to_gro', 'prepare_files',
-                                 'generate_box', 'add_ions'], 
+                                 'generate_box', 'add_ions',
+                                 'energy_minimization', 'plot_energy'], 
                         default="pulse_check", help="The task for the agent.")
     parser.add_argument("-model", type=str,  
                         choices=['Qwen/Qwen2.5-3B-Instruct', 'Qwen/Qwen2.5-1.5B-Instruct'], 
@@ -33,7 +35,8 @@ def main():
 
     custom_tools = [is_gromacs_installed, 
                     create_index_file, prepare_system_files,
-                    prepare_and_solvate_box, add_ions]
+                    prepare_and_solvate_box, add_ions,
+                    gromacs_energy_minimization, plot_edr_to_png]
     agent = CodeAgent(tools=custom_tools, model=model,
                     additional_authorized_imports=[''],
                     verbosity_level=2, max_steps=4)
@@ -48,7 +51,9 @@ def main():
         "conversion_to_gro": f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
         "prepare_files": f"Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
         "generate_box": f"Prepare a simulation box starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. Simulation files must keep the same name as for the PDB file. The Workspace is {workspace}",
-        "add_ions": f"Prepare a simulation box starting from the {pdb_file_path} file and add ions once created. Force field is {force_field}. The water model is {water_model}. Any created file must keep the same prefix as for the PDB file. The Workspace is {workspace}"
+        "add_ions": f"Prepare a simulation box starting from the {pdb_file_path} file and add ions once created. Force field is {force_field}. The water model is {water_model}. Any created file must keep the same prefix as for the PDB file. The Workspace is {workspace}",
+        "energy_minimization": f"Do energy minimization. The workspace is {workspace}",
+        "plot_energy": f"Plot the .edr file in the workspace and save it to PNG. The workspace is {workspace}"
     }
 
     task_template = f"""

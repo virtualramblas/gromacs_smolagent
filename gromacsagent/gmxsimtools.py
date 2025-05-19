@@ -171,3 +171,94 @@ def plot_edr_to_png(workspace_dir: str, output_prefix: str) -> str:
     return "Error: 'gmx' command or matplotlib not found. Make sure they are installed and in your PATH."
   except Exception as e:
     return f"An unexpected error occurred: {e}"
+  
+@tool
+def gromacs_equilibration(workspace_dir: str, prefix: str = 'nvt', temperature: float = 300) -> str:
+  """
+  Performs equilibration (e.g., NVT) using Gromacs within a specified workspace directory.
+
+  Args:
+    workspace_dir: The path to the workspace directory containing the simulation files.
+    prefix: The prefix for the output files (e.g., 'nvt' for NVT equilibration).
+    temperature: The target temperature for equilibration in Kelvin.
+
+  Returns:
+    A string indicating the outcome of the equilibration process.
+  """
+
+  gro_file = None
+  top_file = None
+  mdp_file = None
+
+  try:
+    for fname in os.listdir(workspace_dir):
+        if fname.endswith("_ionized.gro"):
+            gro_file = fname 
+        elif fname.endswith(".top"):
+            top_file = fname 
+        elif fname.endswith(f"{prefix}.mdp"):
+            mdp_file = fname 
+
+    if gro_file is None or top_file is None:
+        return "Error: A .gro and .top file must exist in the workspace directory."
+
+    # Navigate to the workspace directory
+    os.chdir(workspace_dir)
+
+    if mdp_file is None:
+        # Create an equilibration .mdp file
+        mdp_file = f"{prefix}.mdp"
+        # Use basic NVT parameters
+        nvt_mdp_content = f"""
+    title                    = {prefix} equilibration
+    integrator               = md        ; leap-frog integrator
+    dt                       = 0.002     ; 2 fs
+    nsteps                   = 50000     ; 2 fs * 50000 = 100 ps
+    nstxout                  = 500       ; save coordinates every 1 ps
+    nstvout                  = 500       ; save velocities every 1 ps
+    nstenergy                = 500       ; save energies every 1 ps
+    nstlog                   = 500       ; update log file every 1 ps
+    cutoff-scheme            = Verlet
+    nstlist                  = 20
+    ns-type                  = Grid
+    pbc                      = xyz
+    rlist                    = 1.0
+    coulombtype              = pme
+    coulomb-modifier         = Potential-shift-Verlet
+    rcoulomb-switch          = 0
+    rcoulomb                 = 1.0
+    vdw-type                 = cut-off
+    vdw-modifier             = Potential-shift-Verlet
+    rvdw-switch              = 0
+    rvdw                     = 1.0
+    constraints              = h-bonds    ; constrain all bonds (e.g., with LINCS)
+    constraint-algorithm     = Lincs
+    continuation             = no         ; not a continuation of previous simulation
+    lincs-iter               = 1          ; do 1 iteration of LINCS
+    lincs-order              = 4          ; highest order in the expansion of the contraint coupling matrix
+    tcoupl                   = V-rescale  ; Nose-Hoover, Berendsen
+    tc-grps                  = system    ; groups to couple to separate thermostats
+    tau_t                    = 0.1       ; [ps] time constant for coupling
+    ref_t                    = {temperature}  ; [K] reference temperature
+    pcoupl                   = no         ; no pressure coupling in NVT
+    gen_vel                  = yes        ; assign velocities from Maxwell distribution
+    gen_temp                 = {temperature}  ; [K] temperature for Maxwell distribution
+    gen_seed                 = -1         ; generate a random seed
+    """
+        with open(mdp_file, 'w') as f:
+          f.write(nvt_mdp_content)
+
+    # Create the .tpr file for equilibration
+    subprocess.run(["gmx", "grompp", "-f", mdp_file, "-c", gro_file, "-p", top_file, "-o", f"{prefix}.tpr"], check=True)
+
+    # Run the equilibration simulation
+    subprocess.run(["gmx", "mdrun", "-v", "-deffnm", prefix], check=True)
+
+    return f"Equilibration ({prefix}) completed successfully. Output files ({prefix}.log, {prefix}.edr, {prefix}.xtc, etc.) should be in the workspace directory."
+
+  except subprocess.CalledProcessError as e:
+    return f"Error during Gromacs execution: {e}"
+  except FileNotFoundError as e:
+    return f"Error: Gromacs command not found. Is Gromacs installed and in your PATH? {e}"
+  except Exception as e:
+    return f"An unexpected error occurred: {e}"

@@ -1,8 +1,9 @@
 import argparse
 import torch
 from smolagents import CodeAgent, TransformersModel
-from gmxsystools import is_gromacs_installed, create_index_file, prepare_system_files, prepare_and_solvate_box, add_ions
-from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png
+from gmxsystools import (is_gromacs_installed, create_index_file, 
+                         prepare_system_files, prepare_and_solvate_box, add_ions)
+from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png, gromacs_equilibration
 
 def main():
     parser = argparse.ArgumentParser(description="An AI Agent that handles Gromacs workflows.")
@@ -36,7 +37,8 @@ def main():
     custom_tools = [is_gromacs_installed, 
                     create_index_file, prepare_system_files,
                     prepare_and_solvate_box, add_ions,
-                    gromacs_energy_minimization, plot_edr_to_png]
+                    gromacs_energy_minimization, plot_edr_to_png,
+                    gromacs_equilibration]
     agent = CodeAgent(tools=custom_tools, model=model,
                     additional_authorized_imports=[''],
                     verbosity_level=2, max_steps=4)

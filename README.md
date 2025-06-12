@@ -52,7 +52,7 @@ The models that the Agent can use are:
   
 To date, these are those providing the best performance. The evaluation process of other models is still ongoing. The Qwen 2.5 models above require hardware acceleration (NVIDA GPU or Apple Silicon) with minimum 8 GB VRAM. 16 GB VRAM preferable for the 3B version, to have a smoother experience. The model checkpoints are automatically downloaded from the HF's Hub at the first tool execution. They are then cached in the local machine (no need to be connected to the web for any further run, when sticking to the same model).
 #### CLI Execution
-The tool can be executed from the CLI. The ```gromacs_agent.py``` script is the enrty point for execution. In its minimal form it can be executed as follows:  
+The tool can be executed from the CLI. The ```gromacs_agent.py``` script is the entry point for execution. In its minimal form it can be executed as follows:  
 ```
 python gromacs_agent.py -pdb_file <path_to_the_pdb_file>
 ```

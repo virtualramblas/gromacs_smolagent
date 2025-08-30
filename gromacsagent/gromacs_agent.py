@@ -5,6 +5,52 @@ from gmxsystools import (is_gromacs_installed, create_index_file,
                          prepare_system_files, prepare_and_solvate_box, add_ions)
 from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png, gromacs_equilibration
 
+class GromacsMainAgent():
+    def __init__(self, args):
+        self.args = args
+        model_id = args.model
+        model = TransformersModel(model_id,
+                                device_map="auto",
+                                max_new_tokens=1000,
+                                torch_dtype=torch.float16,
+                                do_sample=True,
+                                temperature=0.1)
+        self.custom_tools = [is_gromacs_installed, 
+                    create_index_file, prepare_system_files,
+                    prepare_and_solvate_box, add_ions,
+                    gromacs_energy_minimization, plot_edr_to_png,
+                    gromacs_equilibration]
+        self.agent = CodeAgent(tools=self.custom_tools, model=model,
+                        additional_authorized_imports=[''],
+                        verbosity_level=2, max_steps=4)
+        
+    def run_agent(self):
+        pdb_file_path = self.args.pdb_file
+        force_field = self.args.force_field
+        water_model = self.args.water_model
+        workspace = self.args.workspace
+        task = self.args.task
+        user_tasks_dict = {
+            "pulse_check": "Check if Gromacs in installed.",
+            "conversion_to_gro": f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
+            "prepare_files": f"Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
+            "generate_box": f"Prepare a simulation box starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. Simulation files must keep the same name as for the PDB file. The Workspace is {workspace}",
+            "add_ions": f"Prepare a simulation box starting from the {pdb_file_path} file and add ions once created. Force field is {force_field}. The water model is {water_model}. Any created file must keep the same prefix as for the PDB file. The Workspace is {workspace}",
+            "energy_minimization": f"Do energy minimization. The workspace is {workspace}",
+            "plot_energy": f"Plot the .edr file in the workspace and save it to PNG. The workspace is {workspace}"
+        }
+
+        task_template = f"""
+            You have smolagents tools at your disposal to solve the following coding task:
+            {user_tasks_dict[task]}
+    Follow these rules regarding tool calls:
+    1. ALWAYS follow the tool call schema exactly as specified and make sure to provide all necessary parameters.
+    2. ALWAYS call only the provided tools.
+    3. NEVER do unhautorized Python imports.
+    4. Provide only valid Python code to the answer.
+        """
+        self.agent.run(task_template)
+
 def main():
     parser = argparse.ArgumentParser(description="An AI Agent that handles Gromacs workflows.")
 
@@ -25,49 +71,9 @@ def main():
                         default="Qwen/Qwen2.5-3B-Instruct", help="The Small Language Model to be used by the agent.")
     
     args = parser.parse_args()
-    
-    model_id = args.model
-    model = TransformersModel(model_id,
-                            device_map="auto",
-                            max_new_tokens=1000,
-                            torch_dtype=torch.float16,
-                            do_sample=True,
-                            temperature=0.1)
 
-    custom_tools = [is_gromacs_installed, 
-                    create_index_file, prepare_system_files,
-                    prepare_and_solvate_box, add_ions,
-                    gromacs_energy_minimization, plot_edr_to_png,
-                    gromacs_equilibration]
-    agent = CodeAgent(tools=custom_tools, model=model,
-                    additional_authorized_imports=[''],
-                    verbosity_level=2, max_steps=4)
-    
-    pdb_file_path = args.pdb_file
-    force_field = args.force_field
-    water_model = args.water_model
-    workspace = args.workspace
-    task = args.task
-    user_tasks_dict = {
-        "pulse_check": "Check if Gromacs in installed.",
-        "conversion_to_gro": f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
-        "prepare_files": f"Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
-        "generate_box": f"Prepare a simulation box starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. Simulation files must keep the same name as for the PDB file. The Workspace is {workspace}",
-        "add_ions": f"Prepare a simulation box starting from the {pdb_file_path} file and add ions once created. Force field is {force_field}. The water model is {water_model}. Any created file must keep the same prefix as for the PDB file. The Workspace is {workspace}",
-        "energy_minimization": f"Do energy minimization. The workspace is {workspace}",
-        "plot_energy": f"Plot the .edr file in the workspace and save it to PNG. The workspace is {workspace}"
-    }
-
-    task_template = f"""
-        You have smolagents tools at your disposal to solve the following coding task:
-        {user_tasks_dict[task]}
-Follow these rules regarding tool calls:
-1. ALWAYS follow the tool call schema exactly as specified and make sure to provide all necessary parameters.
-2. ALWAYS call only the provided tools.
-3. NEVER do unhautorized Python imports.
-4. Provide only valid Python code to the answer.
-    """
-    agent.run(task_template)
+    agent = GromacsMainAgent(args)
+    agent.run_agent()
 
 if __name__ == '__main__':
     main()

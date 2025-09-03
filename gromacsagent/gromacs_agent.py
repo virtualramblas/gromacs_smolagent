@@ -1,6 +1,10 @@
 import argparse
 import torch
+from opentelemetry.sdk.trace import TracerProvider
 from smolagents import CodeAgent, TransformersModel
+from openinference.instrumentation.smolagents import SmolagentsInstrumentor
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from gmxsystools import (is_gromacs_installed, create_index_file, 
                          prepare_system_files, prepare_and_solvate_box, add_ions)
 from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png, gromacs_equilibration
@@ -69,8 +73,19 @@ def main():
     parser.add_argument("-model", type=str,  
                         choices=['Qwen/Qwen2.5-3B-Instruct', 'Qwen/Qwen2.5-1.5B-Instruct'], 
                         default="Qwen/Qwen2.5-3B-Instruct", help="The Small Language Model to be used by the agent.")
+    parser.add_argument("-telemetry", type=bool, default=False,
+                        help="Enables telemetry when set to True. Default is False.")
+    parser.add_argument("-telemetry_server_url", type=str, default="http://0.0.0.0:6006/v1/traces",
+                        help="The telemetry server URL. This argument is used only when telemetry is enabled")
     
     args = parser.parse_args()
+
+    if args.telemetry:
+        endpoint = args.telemetry_server_url
+        trace_provider = TracerProvider()
+        trace_provider.add_span_processor(SimpleSpanProcessor(OTLPSpanExporter(endpoint)))
+
+        SmolagentsInstrumentor().instrument(tracer_provider=trace_provider)
 
     agent = GromacsMainAgent(args)
     agent.run_agent()

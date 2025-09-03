@@ -45,6 +45,7 @@ The Python requirements for this Agent are listed in the [requirements.txt](./re
 * Transformers
 * Accelerate  
 * Matplotlib  
+* OpenTelemetry (for agent inspectability only)  
 #### Small Language Model (SLM) used
 The models that the Agent can use are:  
 * [Qwen 2.5 3B Instruct](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct), in FP 16 format.  
@@ -60,11 +61,11 @@ The ```-h``` option prints to the standard output the help related to the full s
 ```
 python gromacs_agent.py -h                                                              
 usage: gromacs_agent.py [-h] -pdb_file PDB_FILE [-force_field FORCE_FIELD]
-                        [-water_model {none,spc,spce,tip3p,tip4p,tip5p,tips3p}]
-                        [-box_size BOX_SIZE] [-concentration CONCENTRATION]
-                        [-workspace WORKSPACE]
-                        [-task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions}]
-                        [-model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct}]
+                        [-water_model {none,spc,spce,tip3p,tip4p,tip5p,tips3p}] [-box_size BOX_SIZE]
+                        [-concentration CONCENTRATION] [-workspace WORKSPACE]
+                        [-task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}]
+                        [-model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct}] [-telemetry TELEMETRY]
+                        [-telemetry_server_url TELEMETRY_SERVER_URL]
 
 An AI Agent that handles Gromacs workflows.
 
@@ -72,20 +73,27 @@ options:
   -h, --help            show this help message and exit
   -pdb_file PDB_FILE    The path and name of the starting PDB file.
   -force_field FORCE_FIELD
-                        The force field to use when preparing the simulation
-                        files.
+                        The force field to use when preparing the simulation files.
   -water_model {none,spc,spce,tip3p,tip4p,tip5p,tips3p}
                         The water model to use.
   -box_size BOX_SIZE    The size of the simulation box.
   -concentration CONCENTRATION
                         The total salt concentration expressed in mol/L
-  -workspace WORKSPACE  The directory where to store all the files for a
-                        simulation.
-  -task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions}
+  -workspace WORKSPACE  The directory where to store all the files for a simulation.
+  -task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}
                         The task for the agent.
   -model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct}
                         The Small Language Model to be used by the agent.
+  -telemetry TELEMETRY  Enables telemetry when set to True. Default is False.
+  -telemetry_server_url TELEMETRY_SERVER_URL
+                        The telemetry server URL. This argument is used only when telemetry is enabled
+
 ```
+#### Agent Inspectability
+To inspect agent runs, this project uses [OpenTelemetry](https://opentelemetry.io), the standard instrumentation chosen by Hugging Face. The telemetry backend is Arize AI's [Phoenix](https://github.com/Arize-ai/phoenix). A Phoenix server instance can be started locally by running the following command within the project's Python virtual environment:  
+```python -m phoenix.server.main serve```   
+Telementry in gromacs_smolagent is disabled by default. When starting the application, you need to set the ```telemetry``` argument to ```True``` to enable it. The ```telemetry_server_url``` argument can then be used to specify the telemetry server URL. As soon as the agent is running, you can inspect it by opening the telemetry server UI in a web browser (the default listening port is 6006, unless you have specified a different one):  
+![The inspectability UI](images/gromacs_inspectability.png)
 #### UI
 Coming soon.  
 

@@ -29,9 +29,10 @@ This is still a work in progress and doesn't cover yet all the phases of MD simu
 ## Usage
 This project supports only Linux and MacOS. It isn't tested on Windows nor WSL (Windows Subsystem for Linux).  
 #### Prerequisites
-The software in the list below is mandatory before installing and using this Agent:
+The prerequisites in the list below are mandatory before installing and using this Agent:
 * Gromacs. Please follow the installation instructions for Linux or MacOS in the official documentation. The Agent has been tested on the Gromacs 2025.1 release.
 * Python 3.12 or later.   
+* GPU (NVIDIA or Apple Silicon).  
 #### Installation
 Just clone this repo locally:  
 ```

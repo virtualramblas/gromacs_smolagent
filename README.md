@@ -93,7 +93,7 @@ options:
 #### Agent Inspectability
 To inspect agent runs, this project uses [OpenTelemetry](https://opentelemetry.io), the standard instrumentation chosen by Hugging Face. The telemetry backend is Arize AI's [Phoenix](https://github.com/Arize-ai/phoenix). A Phoenix server instance can be started locally by running the following command within the project's Python virtual environment:  
 ```python -m phoenix.server.main serve```   
-Telementry in gromacs_smolagent is disabled by default. When starting the application, you need to set the ```telemetry``` argument to ```True``` to enable it. The ```telemetry_server_url``` argument can then be used to specify the telemetry server URL. As soon as the agent is running, you can inspect it by opening the telemetry server UI in a web browser (the default listening port is 6006, unless you have specified a different one):  
+Telemetry in gromacs_smolagent is disabled by default. When starting the application, you need to set the ```telemetry``` argument to ```True``` to enable it. The ```telemetry_server_url``` argument can then be used to specify the telemetry server URL. As soon as the agent is running, you can inspect it by opening the telemetry server UI in a web browser (the default listening port is 6006, unless you have specified a different one):  
 ![The inspectability UI](images/gromacs_inspectability.png)
 #### UI
 Coming soon.  

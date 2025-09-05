@@ -1,5 +1,5 @@
 smolagents[telemetry,toolkit]==1.19.0
 torch==2.7.0
-transformers==4.51.3
+transformers==4.56.1
 accelerate==1.6.0
 matplotlib==3.10.3

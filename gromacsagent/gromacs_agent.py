@@ -1,4 +1,5 @@
 import argparse
+import os
 import torch
 import prompt_utils
 from opentelemetry.sdk.trace import TracerProvider
@@ -13,10 +14,10 @@ from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png, gromacs_eq
 class GromacsMainAgent():
     def __init__(self, args):
         self.args = args
-        model_id = args.model
-        model = TransformersModel(model_id,
+        self.model_id = args.model
+        model = TransformersModel(self.model_id,
                                 device_map="auto",
-                                max_new_tokens=1000,
+                                max_new_tokens=100,
                                 torch_dtype=torch.float16,
                                 do_sample=True,
                                 temperature=0.1)
@@ -40,10 +41,13 @@ class GromacsMainAgent():
                                                                 force_field,
                                                                 water_model)
 
-        task_template = prompt_utils.get_task_template(user_tasks_dict[task])
+        task_template = prompt_utils.get_specific_task_template(self.model_id, 
+                                                                user_tasks_dict[task])
         self.agent.run(task_template)
 
 def main():
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
     parser = argparse.ArgumentParser(description="An AI Agent that handles Gromacs workflows.")
 
     parser.add_argument("-pdb_file", type=str, required=True, help="The path and name of the starting PDB file.")

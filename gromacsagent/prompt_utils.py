@@ -1,6 +1,3 @@
-def get_model_list():
-    return ['Qwen/Qwen2.5-3B-Instruct', 'Qwen/Qwen2.5-1.5B-Instruct']
-
 def get_task_template(user_task):
     return f"""
             You have smolagents tools at your disposal to solve the following coding task:
@@ -11,6 +8,33 @@ def get_task_template(user_task):
     3. NEVER do unhautorized Python imports.
     4. Provide only valid Python code to the answer.
         """
+
+def get_extended_task_template(user_task):
+    return f"""
+            You are an expert molecular dynamics (MD) assistant that helps run GROMACS simulations.
+            Your primary goal is to guide the user through setting up and running MD simulations.
+            You have access to various functions (tools) to interact with GROMACS and manage simulations.
+            You have to solve the following coding task:
+            {user_task}
+    Follow these rules regarding tool calls:
+    1. ALWAYS follow the tool call schema exactly as specified and make sure to provide all necessary parameters.
+    2. ALWAYS call only the provided tools.
+    3. NEVER do unhautorized Python imports.
+    4. Provide only valid Python code to the answer.
+        """
+
+model_prompt_dict = {
+    'Qwen/Qwen2.5-3B-Instruct': get_task_template,
+    'Qwen/Qwen2.5-1.5B-Instruct': get_extended_task_template
+}
+
+def get_model_list():
+    return model_prompt_dict.keys()
+
+def get_specific_task_template(model_id, task):
+    task_template = model_prompt_dict[model_id](task)
+    
+    return task_template
 
 def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model):
     user_tasks_dict = {

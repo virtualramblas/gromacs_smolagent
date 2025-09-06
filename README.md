@@ -32,7 +32,7 @@ This project supports only Linux and MacOS. It isn't tested on Windows nor WSL (
 The prerequisites in the list below are mandatory before installing and using this Agent:
 * Gromacs. Please follow the installation instructions for Linux or MacOS in the official documentation. The Agent has been tested on the Gromacs 2025.1 release.
 * Python 3.12 or later.   
-* GPU (NVIDIA or Apple Silicon).  
+* GPU (NVIDIA or Apple Silicon) or Ollama.  
 #### Installation
 Just clone this repo locally:  
 ```
@@ -48,11 +48,16 @@ The Python requirements for this Agent are listed in the [requirements.txt](./re
 * Matplotlib  
 * OpenTelemetry (for agent inspectability only)  
 #### Small Language Model (SLM) used
+##### Local Models through the HF's Transformers API
 The models that the Agent can use are:  
 * [Qwen 2.5 3B Instruct](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct), in FP 16 format.  
 * [Qwen 2.5 1.5B Instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct), in FP 16 format.  
   
-To date, these are those providing the best performance. The evaluation process of other models is still ongoing. The Qwen 2.5 models above require hardware acceleration (NVIDA GPU or Apple Silicon) with minimum 8 GB VRAM. 16 GB VRAM preferable for the 3B version, to have a smoother experience. The model checkpoints are automatically downloaded from the HF's Hub at the first tool execution. They are then cached in the local machine (no need to be connected to the web for any further run, when sticking to the same model).
+To date, these are those providing the best performance. The evaluation process of other models is still ongoing. The Qwen 2.5 models above require hardware acceleration (NVIDA GPU or Apple Silicon) with minimum 8 GB VRAM. 16 GB VRAM preferable for the 3B version, to have a smoother experience. The model checkpoints are automatically downloaded from the HF's Hub at the first tool execution. They are then cached in the local machine (no need to be connected to the web for any further run, when sticking to the same model).  
+##### Local Models through Ollama
+The models that the Agent can use are:
+* Ollama's Qwen 2.5 3B Instruct  
+To date, this is the one providing the best performance. The evaluation process of other models is ongoing.  
 #### CLI Execution
 The tool can be executed from the CLI. The ```gromacs_agent.py``` script is the entry point for execution. In its minimal form it can be executed as follows:  
 ```
@@ -65,8 +70,9 @@ usage: gromacs_agent.py [-h] -pdb_file PDB_FILE [-force_field FORCE_FIELD]
                         [-water_model {none,spc,spce,tip3p,tip4p,tip5p,tips3p}] [-box_size BOX_SIZE]
                         [-concentration CONCENTRATION] [-workspace WORKSPACE]
                         [-task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}]
-                        [-model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct}] [-telemetry TELEMETRY]
-                        [-telemetry_server_url TELEMETRY_SERVER_URL]
+                        [-provider {transformers,ollama}] [-ollama_api_base OLLAMA_API_BASE]
+                        [-model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct,qwen2.5:3b}]
+                        [-telemetry TELEMETRY] [-telemetry_server_url TELEMETRY_SERVER_URL]
 
 An AI Agent that handles Gromacs workflows.
 
@@ -83,7 +89,11 @@ options:
   -workspace WORKSPACE  The directory where to store all the files for a simulation.
   -task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}
                         The task for the agent.
-  -model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct}
+  -provider {transformers,ollama}
+                        The provider type to use for inference.
+  -ollama_api_base OLLAMA_API_BASE
+                        The Ollama API base URL.
+  -model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct,qwen2.5:3b}
                         The Small Language Model to be used by the agent.
   -telemetry TELEMETRY  Enables telemetry when set to True. Default is False.
   -telemetry_server_url TELEMETRY_SERVER_URL

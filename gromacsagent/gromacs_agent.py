@@ -3,7 +3,7 @@ import os
 import torch
 import prompt_utils
 from opentelemetry.sdk.trace import TracerProvider
-from smolagents import CodeAgent, TransformersModel
+from smolagents import CodeAgent, LiteLLMModel, TransformersModel
 from openinference.instrumentation.smolagents import SmolagentsInstrumentor
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
@@ -15,18 +15,27 @@ class GromacsMainAgent():
     def __init__(self, args):
         self.args = args
         self.model_id = args.model
-        model = TransformersModel(self.model_id,
-                                device_map="auto",
-                                max_new_tokens=100,
-                                torch_dtype=torch.float16,
-                                do_sample=True,
-                                temperature=0.1)
+        if args.provider == "transformers":
+            self.model = TransformersModel(self.model_id,
+                                    device_map="auto",
+                                    max_new_tokens=100,
+                                    torch_dtype=torch.float16,
+                                    do_sample=True,
+                                    temperature=0.1)
+        else:
+            self.model = LiteLLMModel(
+                model_id='ollama_chat/' + self.model_id,
+                api_base=args.ollama_api_base,  
+                api_key="",
+                num_ctx=8192,
+                temperature=0.1
+        )
         self.custom_tools = [is_gromacs_installed, 
                     create_index_file, prepare_system_files,
                     prepare_and_solvate_box, add_ions,
                     gromacs_energy_minimization, plot_edr_to_png,
                     gromacs_equilibration]
-        self.agent = CodeAgent(tools=self.custom_tools, model=model,
+        self.agent = CodeAgent(tools=self.custom_tools, model=self.model,
                         additional_authorized_imports=[''],
                         verbosity_level=2, max_steps=4)
         
@@ -44,6 +53,7 @@ class GromacsMainAgent():
         task_template = prompt_utils.get_specific_task_template(self.model_id, 
                                                                 user_tasks_dict[task])
         self.agent.run(task_template)
+        del self.model
 
 def main():
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -62,6 +72,10 @@ def main():
                                  'generate_box', 'add_ions',
                                  'energy_minimization', 'plot_energy'], 
                         default="pulse_check", help="The task for the agent.")
+    parser.add_argument("-provider", type=str, choices=["transformers", "ollama"],
+                        default="transformers", help="The provider type to use for inference.")
+    parser.add_argument("-ollama_api_base", type=str, default="http://localhost:11434",
+                        help="The Ollama API base URL.")
     parser.add_argument("-model", type=str,  
                         choices=prompt_utils.get_model_list(), 
                         default="Qwen/Qwen2.5-3B-Instruct", help="The Small Language Model to be used by the agent.")

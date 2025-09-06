@@ -25,7 +25,8 @@ def get_extended_task_template(user_task):
 
 model_prompt_dict = {
     'Qwen/Qwen2.5-3B-Instruct': get_task_template,
-    'Qwen/Qwen2.5-1.5B-Instruct': get_extended_task_template
+    'Qwen/Qwen2.5-1.5B-Instruct': get_extended_task_template,
+    'qwen2.5:3b': get_task_template
 }
 
 def get_model_list():

@@ -32,7 +32,7 @@ This project supports only Linux and MacOS. It isn't tested on Windows nor WSL (
 The prerequisites in the list below are mandatory before installing and using this Agent:
 * Gromacs. Please follow the installation instructions for Linux or MacOS in the official documentation. The Agent has been tested on the Gromacs 2025.1 release.
 * Python 3.12 or later.   
-* GPU (NVIDIA or Apple Silicon) or Ollama.  
+* GPU (NVIDIA or Apple Silicon) or [Ollama](https://ollama.com).  
 #### Installation
 Just clone this repo locally:  
 ```
@@ -55,9 +55,13 @@ The models that the Agent can use are:
   
 To date, these are those providing the best performance. The evaluation process of other models is still ongoing. The Qwen 2.5 models above require hardware acceleration (NVIDA GPU or Apple Silicon) with minimum 8 GB VRAM. 16 GB VRAM preferable for the 3B version, to have a smoother experience. The model checkpoints are automatically downloaded from the HF's Hub at the first tool execution. They are then cached in the local machine (no need to be connected to the web for any further run, when sticking to the same model).  
 ##### Local Models through Ollama
+This option is suitable for local machines where no GPU is available or the local GPU has no more than 8 GB VRAM.  
 The models that the Agent can use are:
-* Ollama's Qwen 2.5 3B Instruct  
+* [Ollama's Qwen 2.5 3B Instruct](https://ollama.com/library/qwen2.5:3b).   
+
 To date, this is the one providing the best performance. The evaluation process of other models is ongoing.  
+Before the first run, the model's checkpoints need to be installed to the Ollama server:  
+```ollama pull qwen2.5:3b```
 #### CLI Execution
 The tool can be executed from the CLI. The ```gromacs_agent.py``` script is the entry point for execution. In its minimal form it can be executed as follows:  
 ```

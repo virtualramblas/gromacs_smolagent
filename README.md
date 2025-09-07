@@ -26,6 +26,7 @@ To date, the following tools for the Agent have been implemented:
 ## Warning
 This is still a work in progress and doesn't cover yet all the phases of MD simulations (see the roadmap image below): expect multiple changes to the code in the incoming weeks. Any constructive feedback is welcome.  
 ![Project_Roadmap](images/Gromacs_Smolagents_roadmap.png)
+The current version of this solution is based on a single agent. In plan a future multi-agent release.  
 ## Usage
 This project supports only Linux and MacOS. It isn't tested on Windows nor WSL (Windows Subsystem for Linux).  
 #### Prerequisites
@@ -61,7 +62,9 @@ The models that the Agent can use are:
 
 To date, this is the one providing the best performance. The evaluation process of other models is ongoing.  
 Before the first run, the model's checkpoints need to be installed to the Ollama server:  
-```ollama pull qwen2.5:3b```
+```
+ollama pull qwen2.5:3b
+```
 #### CLI Execution
 The tool can be executed from the CLI. The ```gromacs_agent.py``` script is the entry point for execution. In its minimal form it can be executed as follows:  
 ```

@@ -1,17 +1,16 @@
 import argparse
-import os
 import torch
 import prompt_utils
-from opentelemetry.sdk.trace import TracerProvider
-from smolagents import CodeAgent, LiteLLMModel, TransformersModel
 from openinference.instrumentation.smolagents import SmolagentsInstrumentor
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-from gmxsystools import (is_gromacs_installed, create_index_file, 
-                         prepare_system_files, prepare_and_solvate_box, add_ions)
-from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png, gromacs_equilibration
+from opentelemetry.sdk.trace import TracerProvider
+from smolagents import (CodeAgent, LiteLLMModel, 
+                        ToolCallingAgent, TransformersModel)
+from gmxsystools import (create_index_file, prepare_system_files, 
+                         prepare_and_solvate_box, add_ions)
 
-class GromacsMainAgent():
+class GromacsMultiAgent():
     def __init__(self, args):
         self.args = args
         self.model_id = args.model
@@ -30,15 +29,25 @@ class GromacsMainAgent():
                     num_ctx=8192,
                     temperature=0.1
             )
-        self.custom_tools = [is_gromacs_installed, 
-                    create_index_file, prepare_system_files,
-                    prepare_and_solvate_box, add_ions,
-                    gromacs_energy_minimization, plot_edr_to_png,
-                    gromacs_equilibration]
-        self.agent = CodeAgent(tools=self.custom_tools, model=self.model,
-                        additional_authorized_imports=[''],
-                        verbosity_level=2, max_steps=4)
         
+        # Define the system preparation agent
+        system_preparation_agent = ToolCallingAgent(
+            name="system_preparation_agent",
+            description="This is an agent that can prepare molecular dynanmics simulation environments in GROMACS.",
+            tools=[create_index_file, prepare_system_files, 
+                         prepare_and_solvate_box, add_ions],
+            model=self.model,
+            max_steps=4,
+        )
+        
+        # Define the Manager Agent
+        self.manager_agent = CodeAgent(
+            tools=[],
+            model=self.model,
+            managed_agents=[system_preparation_agent],
+            additional_authorized_imports=['gromacsagent'],
+        )
+
     def run_agent(self):
         pdb_file_path = self.args.pdb_file
         force_field = self.args.force_field
@@ -52,13 +61,11 @@ class GromacsMainAgent():
 
         task_template = prompt_utils.get_specific_task_template(self.model_id, 
                                                                 user_tasks_dict[task])
-        self.agent.run(task_template)
+        self.manager_agent.run(task_template)
         del self.model
 
 def main():
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-    parser = argparse.ArgumentParser(description="An AI Agent that handles Gromacs workflows.")
+    parser = argparse.ArgumentParser(description="An AI Multi-Agent that handles Gromacs workflows.")
 
     parser.add_argument("-pdb_file", type=str, required=True, help="The path and name of the starting PDB file.")
     parser.add_argument("-force_field", type=str, default="amber99sb-ildn", help="The force field to use when preparing the simulation files.")
@@ -93,7 +100,7 @@ def main():
 
         SmolagentsInstrumentor().instrument(tracer_provider=trace_provider)
 
-    agent = GromacsMainAgent(args)
+    agent = GromacsMultiAgent(args)
     agent.run_agent()
 
 if __name__ == '__main__':

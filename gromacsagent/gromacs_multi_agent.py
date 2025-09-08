@@ -9,6 +9,7 @@ from smolagents import (CodeAgent, LiteLLMModel,
                         ToolCallingAgent, TransformersModel)
 from gmxsystools import (create_index_file, prepare_system_files, 
                          prepare_and_solvate_box, add_ions)
+from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png, gromacs_equilibration
 
 class GromacsMultiAgent():
     def __init__(self, args):
@@ -33,9 +34,18 @@ class GromacsMultiAgent():
         # Define the system preparation agent
         system_preparation_agent = ToolCallingAgent(
             name="system_preparation_agent",
-            description="This is an agent that can prepare molecular dynanmics simulation environments in GROMACS.",
+            description="This is an agent that can prepare molecular dynamics simulation environments in GROMACS. It only prepares the environment. It doesn't run any simulation.",
             tools=[create_index_file, prepare_system_files, 
                          prepare_and_solvate_box, add_ions],
+            model=self.model,
+            max_steps=4,
+        )
+
+        # Define the simulation agent
+        simulation_agent = ToolCallingAgent(
+            name="simulation_agent",
+            description="This is an agent that can do molecular dynamics simulations in GROMACS.",
+            tools=[gromacs_energy_minimization, plot_edr_to_png, gromacs_equilibration],
             model=self.model,
             max_steps=4,
         )
@@ -44,7 +54,7 @@ class GromacsMultiAgent():
         self.manager_agent = CodeAgent(
             tools=[],
             model=self.model,
-            managed_agents=[system_preparation_agent],
+            managed_agents=[system_preparation_agent, simulation_agent],
             additional_authorized_imports=['gromacsagent'],
         )
 

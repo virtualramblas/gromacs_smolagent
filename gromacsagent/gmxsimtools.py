@@ -50,12 +50,12 @@ constraint-algorithm     = Lincs
 """
 
 @tool
-def gromacs_energy_minimization(workspace_dir: str, prefix: str='em') -> str:
+def gromacs_energy_minimization(workspace: str, prefix: str='em') -> str:
   """
   Performs energy minimization using Gromacs within a specified workspace directory.
 
   Args:
-    workspace_dir: The path to the workspace directory containing the simulation files.
+    workspace: The path to the workspace directory containing the simulation files.
     prefix: The prefix for all the files that will be generated following execution of the code in this function.
 
   Returns:
@@ -65,7 +65,7 @@ def gromacs_energy_minimization(workspace_dir: str, prefix: str='em') -> str:
   gro_file = None
   top_file = None
   mdp_file = None
-  for fname in os.listdir(workspace_dir):
+  for fname in os.listdir(workspace):
     if fname.endswith("_ionized.gro"):
       gro_file = fname
     elif fname.endswith(".top"):
@@ -77,7 +77,7 @@ def gromacs_energy_minimization(workspace_dir: str, prefix: str='em') -> str:
     return "Error: A .gro and .top file must exist in the workspace directory for energy minimization."
 
   try:
-    os.chdir(workspace_dir)
+    os.chdir(workspace)
 
     # Create ions file if it doesn't exist and populate it with default values
     if mdp_file is None:
@@ -102,13 +102,13 @@ def gromacs_energy_minimization(workspace_dir: str, prefix: str='em') -> str:
     return f"An unexpected error occurred: {e}"
   
 @tool
-def plot_edr_to_png(workspace_dir: str, output_prefix: str) -> str:
+def plot_edr_to_png(workspace: str, output_prefix: str) -> str:
   """
   Starting from an .edr file from Gromacs, generates an .xvg file, and plots
   a chosen energy property to a PNG image.
 
   Args:
-    workspace_dir: The path to the input .edr file.
+    workspace: The path to the input .edr file.
     output_prefix: Prefix for the output .xvg and .png files.
 
   Returns:
@@ -116,7 +116,7 @@ def plot_edr_to_png(workspace_dir: str, output_prefix: str) -> str:
   """
 
   edr_file = None
-  for fname in os.listdir(workspace_dir):
+  for fname in os.listdir(workspace):
     if fname.endswith(".edr"):
       edr_file = fname
 
@@ -127,7 +127,7 @@ def plot_edr_to_png(workspace_dir: str, output_prefix: str) -> str:
   png_file = f"{output_prefix}.png"
 
   try:
-    os.chdir(workspace_dir)
+    os.chdir(workspace)
     # Generate the .xvg file from the .edr file
     process = subprocess.Popen(['gmx', 'energy', '-f', edr_file, '-o', xvg_file], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate(input=b"Potential\n") # Select Potential energy
@@ -173,12 +173,12 @@ def plot_edr_to_png(workspace_dir: str, output_prefix: str) -> str:
     return f"An unexpected error occurred: {e}"
   
 @tool
-def gromacs_equilibration(workspace_dir: str, prefix: str = 'nvt', temperature: float = 300) -> str:
+def gromacs_equilibration(workspace: str, prefix: str = 'nvt', temperature: float = 300) -> str:
   """
   Performs equilibration (e.g., NVT) using Gromacs within a specified workspace directory.
 
   Args:
-    workspace_dir: The path to the workspace directory containing the simulation files.
+    workspace: The path to the workspace directory containing the simulation files.
     prefix: The prefix for the output files (e.g., 'nvt' for NVT equilibration).
     temperature: The target temperature for equilibration in Kelvin.
 
@@ -191,7 +191,7 @@ def gromacs_equilibration(workspace_dir: str, prefix: str = 'nvt', temperature: 
   mdp_file = None
 
   try:
-    for fname in os.listdir(workspace_dir):
+    for fname in os.listdir(workspace):
         if fname.endswith("_ionized.gro"):
             gro_file = fname 
         elif fname.endswith(".top"):
@@ -203,7 +203,7 @@ def gromacs_equilibration(workspace_dir: str, prefix: str = 'nvt', temperature: 
         return "Error: A .gro and .top file must exist in the workspace directory."
 
     # Navigate to the workspace directory
-    os.chdir(workspace_dir)
+    os.chdir(workspace)
 
     if mdp_file is None:
         # Create an equilibration .mdp file

@@ -1,5 +1,6 @@
 # gromacs_smolagent
 An HF's Smolagent to automate molecular dynamics simulations using GROMACS.  
+:point_right: :point_right: :point_right: :point_right: A presentation of this project will happen at the [BioTechX Europe 2025](https://www.terrapinn.com/conference/biotechx/index.stm) conference in Basel, Switzerland, on October 7th 2025. :point_left: :point_left: :point_left:  
   
 ![Gromacs Smolagent Landing Image](images/landing_image.png)
 #### What is Gromacs?

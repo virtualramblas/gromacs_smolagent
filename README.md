@@ -1,6 +1,6 @@
 # gromacs_smolagent
 An HF's Smolagent to automate molecular dynamics simulations using GROMACS.  
-:point_right: :point_right: :point_right: :point_right: A presentation of this project will happen at the [BioTechX Europe 2025](https://www.terrapinn.com/conference/biotechx/index.stm) conference in Basel, Switzerland, on October 7th 2025. :point_left: :point_left: :point_left:  
+:point_right: :point_right: :point_right: A presentation of this project will happen at the [BioTechX Europe 2025](https://www.terrapinn.com/conference/biotechx/index.stm) conference in Basel, Switzerland, on October 7th 2025. :point_left: :point_left: :point_left:  
   
 ![Gromacs Smolagent Landing Image](images/landing_image.png)
 #### What is Gromacs?
@@ -27,7 +27,7 @@ To date, the following tools for the Agent have been implemented:
 ## Warning
 This is still a work in progress and doesn't cover yet all the phases of MD simulations (see the roadmap image below): expect multiple changes to the code in the incoming weeks. Any constructive feedback is welcome.  
 ![Project_Roadmap](images/Gromacs_Smolagents_roadmap.png)
-The current version of this solution is based on a single agent. In plan a future multi-agent release.  
+The first version of this solution was based on a single agent. The current one is multi-agent based.  
 ## Usage
 This project supports only Linux and MacOS. It isn't tested on Windows nor WSL (Windows Subsystem for Linux).  
 #### Prerequisites
@@ -41,6 +41,7 @@ Just clone this repo locally:
 git clone https://github.com/virtualramblas/gromacs_smolagent.git  
 cd gromacs_smolagents
 ```  
+Then install the requirements listed in the following section.  
 #### Virtual environment setup.
 The Python requirements for this Agent are listed in the [requirements.txt](./requirements.txt) file. Whatever package manager you feel more confortable with, please ensure that all the requirements have been installed before the first execution of the code. To date, this tool has been built on the following:  
 * Smolagents
@@ -110,7 +111,9 @@ options:
 ```
 #### Agent Inspectability
 To inspect agent runs, this project uses [OpenTelemetry](https://opentelemetry.io), the standard instrumentation chosen by Hugging Face. The telemetry backend is Arize AI's [Phoenix](https://github.com/Arize-ai/phoenix). A Phoenix server instance can be started locally by running the following command within the project's Python virtual environment:  
-```python -m phoenix.server.main serve```   
+```
+python -m phoenix.server.main serve
+```   
 Telemetry in gromacs_smolagent is disabled by default. When starting the application, you need to set the ```telemetry``` argument to ```True``` to enable it. The ```telemetry_server_url``` argument can then be used to specify the telemetry server URL. As soon as the agent is running, you can inspect it by opening the telemetry server UI in a web browser (the default listening port is 6006, unless you have specified a different one):  
 ![The inspectability UI](images/gromacs_inspectability.png)
 #### UI

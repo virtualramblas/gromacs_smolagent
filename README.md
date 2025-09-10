@@ -68,7 +68,7 @@ Before the first run, the model's checkpoints need to be installed to the Ollama
 ollama pull qwen2.5:3b
 ```
 #### CLI Execution
-The tool can be executed from the CLI. The ```gromacs_agent.py``` script is the entry point for execution. In its minimal form it can be executed as follows:  
+The tool can be executed from the CLI. The ```gromacs_multi_agent.py``` script is the entry point for execution. In its minimal form it can be executed as follows:  
 ```
 python gromacs_agent.py -pdb_file <path_to_the_pdb_file>
 ```
@@ -108,7 +108,8 @@ options:
   -telemetry_server_url TELEMETRY_SERVER_URL
                         The telemetry server URL. This argument is used only when telemetry is enabled
 
-```
+```  
+To execute the old version of the tool (single agent based), you need to run the ```gromacs_agent.py``` script. Its syntax is exactly the same as for the multi-agent version.  
 #### Agent Inspectability
 To inspect agent runs, this project uses [OpenTelemetry](https://opentelemetry.io), the standard instrumentation chosen by Hugging Face. The telemetry backend is Arize AI's [Phoenix](https://github.com/Arize-ai/phoenix). A Phoenix server instance can be started locally by running the following command within the project's Python virtual environment:  
 ```

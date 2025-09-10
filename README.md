@@ -70,12 +70,12 @@ ollama pull qwen2.5:3b
 #### CLI Execution
 The tool can be executed from the CLI. The ```gromacs_multi_agent.py``` script is the entry point for execution. In its minimal form it can be executed as follows:  
 ```
-python gromacs_agent.py -pdb_file <path_to_the_pdb_file>
+python gromacs_multi_agent.py -pdb_file <path_to_the_pdb_file>
 ```
 The ```-h``` option prints to the standard output the help related to the full set of options for the script:  
 ```
-python gromacs_agent.py -h                                                              
-usage: gromacs_agent.py [-h] -pdb_file PDB_FILE [-force_field FORCE_FIELD]
+python gromacs_multi_agent.py -h                                                              
+usage: gromacs_multi_agent.py [-h] -pdb_file PDB_FILE [-force_field FORCE_FIELD]
                         [-water_model {none,spc,spce,tip3p,tip4p,tip5p,tips3p}] [-box_size BOX_SIZE]
                         [-concentration CONCENTRATION] [-workspace WORKSPACE]
                         [-task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}]

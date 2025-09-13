@@ -1,3 +1,5 @@
+import os
+
 def get_task_template(user_task):
     return f"""
             You have smolagents tools at your disposal to solve the following coding task:
@@ -39,6 +41,8 @@ def get_specific_task_template(model_id, task):
 
 def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model):
     user_tasks_dict = {
+            "pdb_validation": f"Check if the {str(os.path.abspath(pdb_file_path))} file has a valid PDB structure.",
+            "pdb_analysis": f"Analyze the {str(os.path.abspath(pdb_file_path))} file.",
             "pulse_check": "Check if Gromacs in installed.",
             "conversion_to_gro": f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
             "prepare_files": f"Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",

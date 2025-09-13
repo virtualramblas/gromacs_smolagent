@@ -3,3 +3,4 @@ torch==2.7.0
 transformers==4.56.1
 accelerate==1.6.0
 matplotlib==3.10.3
+biopython==1.85

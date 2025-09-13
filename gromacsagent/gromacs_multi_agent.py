@@ -10,6 +10,7 @@ from smolagents import (CodeAgent, LiteLLMModel,
 from gmxsystools import (create_index_file, prepare_system_files, 
                          prepare_and_solvate_box, add_ions)
 from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png, gromacs_equilibration
+from pdbtools import is_pdb_valid, analyze_pdb_file
 
 class GromacsMultiAgent():
     def __init__(self, args):
@@ -31,6 +32,15 @@ class GromacsMultiAgent():
                     temperature=0.1
             )
         
+        # Define the PDB file analysis agent
+        pdb_analysis_agent = ToolCallingAgent(
+            name="pdb_analysis_agent",
+            description="This is an agent that can perform analysis of PDB files. It only does the analysis. It doesn't run any simulation.",
+            tools=[is_pdb_valid, analyze_pdb_file],
+            model=self.model,
+            max_steps=4,
+        )
+
         # Define the system preparation agent
         system_preparation_agent = ToolCallingAgent(
             name="system_preparation_agent",
@@ -54,7 +64,7 @@ class GromacsMultiAgent():
         self.manager_agent = CodeAgent(
             tools=[],
             model=self.model,
-            managed_agents=[system_preparation_agent, simulation_agent],
+            managed_agents=[pdb_analysis_agent, system_preparation_agent, simulation_agent],
             additional_authorized_imports=['gromacsagent'],
         )
 
@@ -85,7 +95,7 @@ def main():
     parser.add_argument("-concentration", type=float, default=0.15, help="The total salt concentration expressed in mol/L")
     parser.add_argument("-workspace", type=str, default=".", help="The directory where to store all the files for a simulation.")
     parser.add_argument("-task", type=str,  
-                        choices=['pulse_check', 'conversion_to_gro', 'prepare_files',
+                        choices=['pdb_validation', 'pdb_analysis', 'pulse_check', 'conversion_to_gro', 'prepare_files',
                                  'generate_box', 'add_ions',
                                  'energy_minimization', 'plot_energy'], 
                         default="pulse_check", help="The task for the agent.")

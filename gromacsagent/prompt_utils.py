@@ -25,10 +25,21 @@ def get_extended_task_template(user_task):
     4. Provide only valid Python code to the answer.
         """
 
+def get_multi_agent_task_template(user_task):
+    return f"""
+            You have agents at your disposal to solve the following coding task:
+            {user_task}
+    Follow these rules regarding agent orchestration:
+    1. ALWAYS follow a plan exactly as specified and make sure to provide all necessary parameters.
+    2. ALWAYS call only the managed agents.
+    3. Managed agents can use only the tools they are authorized to use.
+    4. NEVER do unhautorized Python imports.
+        """
+
 model_prompt_dict = {
     'Qwen/Qwen2.5-3B-Instruct': get_task_template,
     'Qwen/Qwen2.5-1.5B-Instruct': get_extended_task_template,
-    'qwen2.5:3b': get_task_template
+    'qwen2.5:3b': get_multi_agent_task_template
 }
 
 def get_model_list():

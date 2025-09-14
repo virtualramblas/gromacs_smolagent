@@ -7,7 +7,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace import TracerProvider
 from smolagents import (CodeAgent, LiteLLMModel, 
                         ToolCallingAgent, TransformersModel)
-from gmxsystools import (create_index_file, prepare_system_files, 
+from gmxsystools import (is_gromacs_installed, create_index_file, prepare_system_files, 
                          prepare_and_solvate_box, add_ions)
 from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png, gromacs_equilibration
 from pdbtools import is_pdb_valid, analyze_pdb_file
@@ -45,7 +45,7 @@ class GromacsMultiAgent():
         system_preparation_agent = ToolCallingAgent(
             name="system_preparation_agent",
             description="This is an agent that can prepare molecular dynamics simulation environments in GROMACS. It only prepares the environment. It doesn't run any simulation.",
-            tools=[create_index_file, prepare_system_files, 
+            tools=[is_gromacs_installed, create_index_file, prepare_system_files, 
                          prepare_and_solvate_box, add_ions],
             model=self.model,
             max_steps=4,

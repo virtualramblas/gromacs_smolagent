@@ -51,7 +51,8 @@ class GromacsMainAgent():
                                                                 water_model)
 
         task_template = prompt_utils.get_specific_task_template(self.model_id, 
-                                                                user_tasks_dict[task])
+                                                                user_tasks_dict[task],
+                                                                False)
         self.agent.run(task_template)
         del self.model
 

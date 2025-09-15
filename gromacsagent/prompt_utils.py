@@ -37,16 +37,20 @@ def get_multi_agent_task_template(user_task):
         """
 
 model_prompt_dict = {
-    'Qwen/Qwen2.5-3B-Instruct': get_task_template,
-    'Qwen/Qwen2.5-1.5B-Instruct': get_extended_task_template,
-    'qwen2.5:3b': get_multi_agent_task_template
+    'Qwen/Qwen2.5-3B-Instruct': [get_task_template, get_multi_agent_task_template],
+    'Qwen/Qwen2.5-1.5B-Instruct': [get_extended_task_template],
+    'qwen2.5:3b': [get_task_template, get_multi_agent_task_template]
 }
 
 def get_model_list():
     return model_prompt_dict.keys()
 
-def get_specific_task_template(model_id, task):
-    task_template = model_prompt_dict[model_id](task)
+def get_specific_task_template(model_id, task, is_multi_agent=True):
+    if is_multi_agent:
+        task_template_idx = 1
+    else:
+        task_template_idx = 0
+    task_template = model_prompt_dict[model_id][task_template_idx](task)
     
     return task_template
 

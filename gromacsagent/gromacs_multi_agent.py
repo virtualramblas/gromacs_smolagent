@@ -68,6 +68,8 @@ class GromacsMultiAgent():
             additional_authorized_imports=['gromacsagent'],
         )
 
+        self.manager_agent.prompt_templates["final_answer"]["post_messages"] = "Based on the above, please provide an answer to the given task. Always answer in user-readable text, don't use json."
+
     def run_agent(self):
         pdb_file_path = self.args.pdb_file
         force_field = self.args.force_field

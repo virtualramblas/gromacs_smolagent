@@ -4,7 +4,7 @@ from smolagents import tool
 
 @tool
 def is_gromacs_installed() -> bool:
-  """Checks if Gromacs is installed and accessible in the system's PATH.
+  """Checks if Gromacs is installed.
 
   Returns:
     True if Gromacs is installed and its version can be retrieved, False otherwise.

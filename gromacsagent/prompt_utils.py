@@ -68,3 +68,6 @@ def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model)
         }
     
     return user_tasks_dict
+
+def get_final_answer_prompt_template():
+    return "Based on the above, please provide an answer to the given task. Always answer in user-readable text, don't use json."

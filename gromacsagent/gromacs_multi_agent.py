@@ -19,7 +19,7 @@ class GromacsMultiAgent():
         if args.provider == "transformers":
             self.model = TransformersModel(self.model_id,
                                     device_map="auto",
-                                    max_new_tokens=100,
+                                    max_new_tokens=200,
                                     torch_dtype=torch.float16,
                                     do_sample=True,
                                     temperature=0.1)
@@ -51,6 +51,8 @@ class GromacsMultiAgent():
             max_steps=4,
         )
 
+        system_preparation_agent.prompt_templates["final_answer"]["post_messages"] = prompt_utils.get_final_answer_prompt_template()
+
         # Define the simulation agent
         simulation_agent = ToolCallingAgent(
             name="simulation_agent",
@@ -59,7 +61,9 @@ class GromacsMultiAgent():
             model=self.model,
             max_steps=4,
         )
-        
+
+        simulation_agent.prompt_templates["final_answer"]["post_messages"] = prompt_utils.get_final_answer_prompt_template()
+
         # Define the Manager Agent
         self.manager_agent = CodeAgent(
             tools=[],
@@ -68,7 +72,7 @@ class GromacsMultiAgent():
             additional_authorized_imports=['gromacsagent'],
         )
 
-        self.manager_agent.prompt_templates["final_answer"]["post_messages"] = "Based on the above, please provide an answer to the given task. Always answer in user-readable text, don't use json."
+        self.manager_agent.prompt_templates["final_answer"]["post_messages"] = prompt_utils.get_final_answer_prompt_template()
 
     def run_agent(self):
         pdb_file_path = self.args.pdb_file

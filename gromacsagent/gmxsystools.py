@@ -79,7 +79,7 @@ def create_index_file(pdb_file: str, index_file: str, workspace:str = ".") -> bo
         return is_success
 
 @tool
-def prepare_system_files(pdb_file: str, output_prefix: str, force_field: str='amber99sb-ildn', water_model:str = 'tip3p', workspace:str = ".") -> bool:
+def prepare_system_files(pdb_file: str, output_prefix: str='', force_field: str='amber99sb-ildn', water_model:str = 'tip3p', workspace:str = ".") -> bool:
     """Prepares necessary files for a Gromacs simulation from a PDB file.
 
     Args:
@@ -93,6 +93,9 @@ def prepare_system_files(pdb_file: str, output_prefix: str, force_field: str='am
       True if the simulation files have been successfully created, False otherwise.
     """
 
+    if output_prefix == '':
+        file_name_with_extension = os.path.basename(pdb_file)
+        output_prefix, _ = os.path.splitext(file_name_with_extension)
     gro_file = f"{output_prefix}.gro"
     itp_file = f"{output_prefix}.itp"
     top_file = f"{output_prefix}.top"

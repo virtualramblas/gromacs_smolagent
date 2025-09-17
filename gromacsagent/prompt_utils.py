@@ -60,7 +60,7 @@ def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model)
             "pdb_analysis": f"Analyze the {str(os.path.abspath(pdb_file_path))} file.",
             "pulse_check": "Check if Gromacs in installed.",
             "conversion_to_gro": f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
-            "prepare_files": f"Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
+            "prepare_files": f"Complete only the following task and don't do anything else when completed: Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
             "generate_box": f"Prepare a simulation box starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. Simulation files must keep the same name as for the PDB file. The Workspace is {workspace}",
             "add_ions": f"Prepare a simulation box starting from the {pdb_file_path} file and add ions once created. Force field is {force_field}. The water model is {water_model}. Any created file must keep the same prefix as for the PDB file. The Workspace is {workspace}",
             "energy_minimization": f"Do energy minimization. The workspace is {workspace}",

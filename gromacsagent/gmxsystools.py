@@ -1,5 +1,6 @@
 import os
 import subprocess
+from typing import Iterable
 from smolagents import tool
 
 @tool
@@ -92,29 +93,33 @@ def prepare_system_files(pdb_file: str, output_prefix: str='', force_field: str=
     Returns:
       True if the simulation files have been successfully created, False otherwise.
     """
+    workspace_abspath = os.path.abspath(workspace)
+    sys_files_exist = workspace_contains_system_files(workspace_abspath, ['.gro', '.itp', '.top'])
+    if sys_files_exist:
+        return True
+    else:
+        if output_prefix == '':
+            file_name_with_extension = os.path.basename(pdb_file)
+            output_prefix, _ = os.path.splitext(file_name_with_extension)
+        gro_file = f"{output_prefix}.gro"
+        itp_file = f"{output_prefix}.itp"
+        top_file = f"{output_prefix}.top"
 
-    if output_prefix == '':
-        file_name_with_extension = os.path.basename(pdb_file)
-        output_prefix, _ = os.path.splitext(file_name_with_extension)
-    gro_file = f"{output_prefix}.gro"
-    itp_file = f"{output_prefix}.itp"
-    top_file = f"{output_prefix}.top"
-
-    is_success = False
-    try:
-        subprocess.run(['gmx', 'pdb2gmx', '-f', pdb_file, 
-                        '-o', os.path.join(workspace, gro_file), 
-                        '-i', os.path.join(workspace, itp_file), 
-                        '-p', os.path.join(workspace, top_file), 
-                        '-ff', force_field, '-ignh', '-heavyh', '-water', water_model], check=True)
-        print(f"Successfully prepared files for GMX.")
-        is_success = True
-    except FileNotFoundError:
-        print("Error: 'gmx' command not found. Make sure Gromacs is installed and in your PATH.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error preparing files: {e}")
-    finally:
-        return is_success
+        is_success = False
+        try:
+            subprocess.run(['gmx', 'pdb2gmx', '-f', pdb_file, 
+                            '-o', os.path.join(workspace, gro_file), 
+                            '-i', os.path.join(workspace, itp_file), 
+                            '-p', os.path.join(workspace, top_file), 
+                            '-ff', force_field, '-ignh', '-heavyh', '-water', water_model], check=True)
+            print(f"Successfully prepared files for GMX.")
+            is_success = True
+        except FileNotFoundError:
+            print("Error: 'gmx' command not found. Make sure Gromacs is installed and in your PATH.")
+        except subprocess.CalledProcessError as e:
+            print(f"Error preparing files: {e}")
+        finally:
+            return is_success
     
 @tool
 def prepare_and_solvate_box(gro_file: str, top_file: str, output_prefix: str, box_size: float = 1.0, workspace:str = ".") -> bool:
@@ -189,3 +194,36 @@ def add_ions(gro_file: str, top_file: str, output_prefix: str, concentration: fl
         print(f"Error adding ions: {e}")
     finally:
         return is_success
+    
+def workspace_contains_system_files(workspace: str, extensions: Iterable[str]):
+   """
+   Returns True if the `workspace` contains at least one file for every extension in `extensions`.
+   Assumes dir_path contains only files and no subdirectories.
+
+    Args:
+      workspace: path to the directory to check.
+      extensions: iterable of extension strings (with or without leading dot, case insensitive).
+
+    Raises:
+      NotADirectoryError if workspace is not a directory.
+   """
+
+   exts_needed = {('.' + e.lower().lstrip('.')) for e in extensions if e}
+   if not os.path.isdir(workspace):
+      raise NotADirectoryError(f"Not a directory: {workspace}")
+   if not exts_needed:
+      return True
+   
+   found = set()
+   for name in os.listdir(workspace):
+      full = os.path.join(workspace, name)
+      if not os.path.isfile(full):
+         continue
+      _, extension = os.path.splitext(name)
+      extension = extension.lower()
+      if extension in exts_needed:
+         found.add(extension)
+         if found == exts_needed:
+            return True
+         
+   return False

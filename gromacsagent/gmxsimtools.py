@@ -50,12 +50,12 @@ constraint-algorithm     = Lincs
 """
 
 @tool
-def gromacs_energy_minimization(workspace: str, prefix: str='em') -> str:
+def gromacs_energy_minimization(workspace: str=".", prefix: str='em') -> str:
   """
   Performs energy minimization using Gromacs within a specified workspace directory.
 
   Args:
-    workspace: The path to the workspace directory containing the simulation files.
+    workspace: The directory containing the simulation files.
     prefix: The prefix for all the files that will be generated following execution of the code in this function.
 
   Returns:
@@ -65,8 +65,9 @@ def gromacs_energy_minimization(workspace: str, prefix: str='em') -> str:
   gro_file = None
   top_file = None
   mdp_file = None
+  workspace = os.path.abspath(workspace)
   for fname in os.listdir(workspace):
-    if fname.endswith("_ionized.gro"):
+    if fname.endswith("_ionized.gro") or fname.endswith(".gro"):
       gro_file = fname
     elif fname.endswith(".top"):
       top_file = fname

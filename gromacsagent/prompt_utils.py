@@ -55,6 +55,10 @@ def get_specific_task_template(model_id, task, is_multi_agent=True):
     return task_template
 
 def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model):
+    file_name_with_extension = os.path.basename(pdb_file_path)
+    output_prefix, _ = os.path.splitext(file_name_with_extension) 
+    gro_file = f"{output_prefix}_solv.gro"
+    top_file = f"{output_prefix}.top" 
     user_tasks_dict = {
             "pdb_validation": f"Check if the {str(os.path.abspath(pdb_file_path))} file has a valid PDB structure.",
             "pdb_analysis": f"Analyze the {str(os.path.abspath(pdb_file_path))} file.",
@@ -62,8 +66,8 @@ def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model)
             "conversion_to_gro": f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
             "prepare_files": f"Complete only the following task and don't do anything else when completed: Prepare the necessary files for a Gromacs simulation starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
             "generate_box": f"Complete only the following task and don't do anything else when completed: Prepare a simulation box starting from the {pdb_file_path} file. Force field is {force_field}. The water model is {water_model}. Simulation files must keep the same name as for the PDB file. The Workspace is {workspace}",
-            "add_ions": f"Prepare a simulation box starting from the {pdb_file_path} file and add ions once created. Force field is {force_field}. The water model is {water_model}. Any created file must keep the same prefix as for the PDB file. The Workspace is {workspace}",
-            "energy_minimization": f"Do energy minimization. The workspace is {workspace}",
+            "add_ions": f"Complete only the following task and don't do anything else when completed: add ions. The GRO file is {gro_file}. The topology file is {top_file}. The out prefix is {output_prefix}. The Workspace is {workspace}",
+            "energy_minimization": f"Complete only the following task and don't do anything else when completed: Do energy minimization. The prefix is em. The Workspace is {workspace}",
             "plot_energy": f"Plot the .edr file in the workspace and save it to PNG. The workspace is {workspace}"
         }
     

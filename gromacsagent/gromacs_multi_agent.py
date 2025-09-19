@@ -42,16 +42,25 @@ class GromacsMultiAgent():
         )
 
         # Define the system preparation agent
-        system_preparation_agent = ToolCallingAgent(
-            name="system_preparation_agent",
-            description="This is an agent that can prepare molecular dynamics simulation environments in GROMACS. It only prepares the environment. It doesn't run any simulation.",
-            tools=[is_gromacs_installed, create_index_file, prepare_system_files, 
-                         prepare_and_solvate_box, add_ions],
+        system_configuration_agent = ToolCallingAgent(
+            name="system_configuration_agent",
+            description="This is an agent that can create system files in GROMACS. It only creates the system files. It doesn't run any simulation.",
+            tools=[is_gromacs_installed, create_index_file, prepare_system_files],
             model=self.model,
             max_steps=4,
         )
 
-        system_preparation_agent.prompt_templates["final_answer"]["post_messages"] = prompt_utils.get_final_answer_prompt_template()
+        system_configuration_agent.prompt_templates["final_answer"]["post_messages"] = prompt_utils.get_final_answer_prompt_template()
+
+        box_preparation_agent = ToolCallingAgent(
+            name="box_preparation_agent",
+            description="This is an agent that can prepare box environments in GROMACS. It only prepares the box. It can add ions to the box. It doesn't run any simulation.",
+            tools=[prepare_and_solvate_box, add_ions],
+            model=self.model,
+            max_steps=4,
+        )
+
+        box_preparation_agent.prompt_templates["final_answer"]["post_messages"] = prompt_utils.get_final_answer_prompt_template()
 
         # Define the simulation agent
         simulation_agent = ToolCallingAgent(
@@ -68,7 +77,7 @@ class GromacsMultiAgent():
         self.manager_agent = CodeAgent(
             tools=[],
             model=self.model,
-            managed_agents=[pdb_analysis_agent, system_preparation_agent, simulation_agent],
+            managed_agents=[pdb_analysis_agent, system_configuration_agent, box_preparation_agent, simulation_agent],
             additional_authorized_imports=['gromacsagent'],
         )
 
@@ -79,12 +88,16 @@ class GromacsMultiAgent():
         force_field = self.args.force_field
         water_model = self.args.water_model
         workspace = self.args.workspace
-        task = self.args.task
+        box_size = self.args.box_size
+        concentration = self.args.concentration
         user_tasks_dict = prompt_utils.get_user_task_dictionary(pdb_file_path,
                                                                 workspace,
                                                                 force_field,
-                                                                water_model)
+                                                                water_model,
+                                                                box_size,
+                                                                concentration)
 
+        task = self.args.task
         task_template = prompt_utils.get_specific_task_template(self.model_id, 
                                                                 user_tasks_dict[task])
         self.manager_agent.run(task_template)

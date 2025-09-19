@@ -263,3 +263,5 @@ def gromacs_equilibration(workspace: str, prefix: str = 'nvt', temperature: floa
     return f"Error: Gromacs command not found. Is Gromacs installed and in your PATH? {e}"
   except Exception as e:
     return f"An unexpected error occurred: {e}"
+  
+   

@@ -12,7 +12,7 @@ Molecular dynamics (MD) is a computer simulation technique used to study the phy
 #### What is Hugging Face?
 Seriuosly? If you are among the few dozens people in the world that have never heard of Hugging Face 🤗, please go discover that ecosystem [here](https://huggingface.co) before moving on with this repo.  
 #### What's in this repo?
-This repo provides a concrete example implementation of an AI agent that uses a lightweight library and an Open Source Small Language Model. The final implementation of this agent would automate setup, simulation and analysis tasks performed through the Gromacs tool.   
+This repo includes the source code of a concrete example implementation of Agentic AI built on top of a lightweight library and an Open Source Small Language Model. The final implementation would automate setup, simulation and analysis tasks performed through the Gromacs tool.   
 ## Custom Tools
 To date, the following tools for the Agent have been implemented:      
 * *is_gromacs_installed*: to verify that a local Gromacs instance is available and running.
@@ -118,5 +118,5 @@ python -m phoenix.server.main serve
 Telemetry in gromacs_smolagent is disabled by default. When starting the application, you need to set the ```telemetry``` argument to ```True``` to enable it. The ```telemetry_server_url``` argument can then be used to specify the telemetry server URL. As soon as the agent is running, you can inspect it by opening the telemetry server UI in a web browser (the default listening port is 6006, unless you have specified a different one):  
 ![The inspectability UI](images/gromacs_inspectability.png)
 #### UI
-Coming soon.  
+To be decided how to make it really user-friendly.  
 

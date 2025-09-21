@@ -50,7 +50,7 @@ constraint-algorithm     = Lincs
 """
 
 @tool
-def gromacs_energy_minimization(workspace: str=".", prefix: str='em') -> str:
+def gromacs_energy_minimization(prefix: str='em', workspace: str=".") -> str:
   """
   Performs energy minimization using Gromacs within a specified workspace directory.
 

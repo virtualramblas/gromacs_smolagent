@@ -74,5 +74,25 @@ def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model,
     
     return user_tasks_dict
 
+def get_ollama_user_task_dictionary(pdb_file_path, workspace, force_field, water_model, box_size, concentration):
+    file_name_with_extension = os.path.basename(pdb_file_path)
+    output_prefix, _ = os.path.splitext(file_name_with_extension) 
+    gro_file = f"{output_prefix}.gro"
+    gro_solvated_file = f"{output_prefix}_solv.gro"
+    top_file = f"{output_prefix}.top" 
+    user_tasks_dict = {
+            "pdb_validation": f"Check if the {str(os.path.abspath(pdb_file_path))} file has a valid PDB structure.",
+            "pdb_analysis": f"Analyze the {str(os.path.abspath(pdb_file_path))} file.",
+            "pulse_check": "Check if Gromacs in installed.",
+            "conversion_to_gro": f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
+            "prepare_files": f"Complete only the following task and don't do anything else when completed: Create the necessary system files for Gromacs starting from the {pdb_file_path} file. Output prefix is the name of the PDB file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
+            "generate_box": f"Complete only the following task and don't do anything else when completed: Prepare a simulation box. The GRO file is {gro_file}. The topology file is {top_file}. The out prefix is {output_prefix}. The box size is {box_size}. The Workspace is {workspace}",
+            "add_ions": f"Complete only the following task and don't do anything else when completed: add ions. The GRO file is {gro_solvated_file}. The topology file is {top_file}. The out prefix is {output_prefix}. Concentration is {concentration}. The Workspace is {workspace}",
+            "energy_minimization": f"Complete only the following task and don't do anything else when completed: Do energy minimization. The prefix is em. The Workspace is {workspace}",
+            "plot_energy": f"Plot the .edr file in the workspace and save it to PNG. The workspace is {workspace}"
+        }
+    
+    return user_tasks_dict
+
 def get_final_answer_prompt_template():
     return "Based on the above, please provide an answer to the given task. Always answer in user-readable text, don't use json."

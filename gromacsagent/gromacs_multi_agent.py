@@ -90,12 +90,20 @@ class GromacsMultiAgent():
         workspace = self.args.workspace
         box_size = self.args.box_size
         concentration = self.args.concentration
-        user_tasks_dict = prompt_utils.get_user_task_dictionary(pdb_file_path,
+        if self.args.provider == "ollama":
+            user_tasks_dict = prompt_utils.get_ollama_user_task_dictionary(pdb_file_path,
                                                                 workspace,
                                                                 force_field,
                                                                 water_model,
                                                                 box_size,
                                                                 concentration)
+        else:
+            user_tasks_dict = prompt_utils.get_user_task_dictionary(pdb_file_path,
+                                                                    workspace,
+                                                                    force_field,
+                                                                    water_model,
+                                                                    box_size,
+                                                                    concentration)
 
         task = self.args.task
         task_template = prompt_utils.get_specific_task_template(self.model_id, 

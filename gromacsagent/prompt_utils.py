@@ -65,10 +65,10 @@ def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model,
             "pdb_analysis": f"Analyze the {str(os.path.abspath(pdb_file_path))} file.",
             "pulse_check": "Check if Gromacs in installed.",
             "conversion_to_gro": f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
-            "prepare_files": f"Complete only the following task and don't do anything else when completed: Create the necessary system files for Gromacs starting from the {pdb_file_path} file. Output prefix is the name of the PDB file. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
+            "prepare_files": f"Complete only the following task and don't do anything else when completed: Create the system configuration files. The PDB file path is {pdb_file_path}. The output prefix is {output_prefix}. Force field is {force_field}. The water model is {water_model}. The Workspace is {workspace}",
             "generate_box": f"Complete only the following task and don't do anything else when completed: Prepare a simulation box. The GRO file is {gro_file}. The topology file is {top_file}. The out prefix is {output_prefix}. The box size is {box_size}. The Workspace is {workspace}",
-            "add_ions": f"Complete only the following task and don't do anything else when completed: add ions. The GRO file is {gro_solvated_file}. The topology file is {top_file}. The out prefix is {output_prefix}. Concentration is {concentration}. The Workspace is {workspace}",
-            "energy_minimization": f"Complete only the following task and don't do anything else when completed: Do energy minimization. The prefix is em. The Workspace is {workspace}",
+            "add_ions": f"Complete only the following task and don't do anything else when completed: add ions. The GRO file is {gro_solvated_file}. The topology file is {top_file}. The out prefix is {output_prefix}. Concentration is {concentration}. The Workspace is {str(os.path.abspath(workspace))}",
+            "energy_minimization": f"Complete only the following task and don't do anything else when completed: Execute energy minimization. Use the simulation box in the workspace. The prefix is em. The Workspace is {str(os.path.abspath(workspace))}",
             "plot_energy": f"Plot the .edr file in the workspace and save it to PNG. The workspace is {workspace}"
         }
     

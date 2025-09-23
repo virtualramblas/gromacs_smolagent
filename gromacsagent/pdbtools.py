@@ -30,6 +30,34 @@ def is_pdb_valid(pdb_file: str) -> bool:
     return is_valid_pdb
 
 @tool
+def download_from_protein_data_bank(structure_id:str, workspace:str = ".") -> bool:
+    """Download a protein structure in PDB format from the Protein Data Bank.
+
+    Args:
+        structure_id: The ID of the protein structure to download.
+        workspace: The directory where to save the downloaded PDB file.
+
+    Returns:
+        True if the download is successful, False otherwise.
+    """
+    has_file_been_downloaded = False
+
+    try:
+        pdbl = PDBList()
+        pdb_id_list = [structure_id]
+        for id in pdb_id_list:
+            pdbl.retrieve_pdb_file(id, 
+                                pdir=str(os.path.abspath(workspace)), 
+                                file_format="pdb", 
+                                overwrite=True)
+            os.rename("pdb" + id + ".ent", id + ".pdb")
+            has_file_been_downloaded = True
+    except:
+        print(f"Failed to download the {structure_id} PDB file")
+
+    return has_file_been_downloaded
+
+@tool
 def analyze_pdb_file(pdb_file: str) -> tuple[list, list, list]:
     """Perform analysis of a PDB file.
 

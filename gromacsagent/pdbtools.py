@@ -44,14 +44,12 @@ def download_from_protein_data_bank(structure_id:str, workspace:str = ".") -> bo
 
     try:
         pdbl = PDBList()
-        pdb_id_list = [structure_id]
-        for id in pdb_id_list:
-            pdbl.retrieve_pdb_file(id, 
-                                pdir=str(os.path.abspath(workspace)), 
-                                file_format="pdb", 
-                                overwrite=True)
-            os.rename("pdb" + id + ".ent", id + ".pdb")
-            has_file_been_downloaded = True
+        pdbl.retrieve_pdb_file(structure_id, 
+                            pdir=str(os.path.abspath(workspace)), 
+                            file_format="pdb", 
+                            overwrite=True)
+        os.rename("pdb" + structure_id + ".ent", structure_id + ".pdb")
+        has_file_been_downloaded = True
     except:
         print(f"Failed to download the {structure_id} PDB file")
 

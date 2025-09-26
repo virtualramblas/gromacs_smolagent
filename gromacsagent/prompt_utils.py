@@ -54,7 +54,7 @@ def get_specific_task_template(model_id, task, is_multi_agent=True):
     
     return task_template
 
-def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model, box_size, concentration):
+def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model, box_size, concentration, structure_id):
     file_name_with_extension = os.path.basename(pdb_file_path)
     output_prefix, _ = os.path.splitext(file_name_with_extension) 
     gro_file = f"{output_prefix}.gro"
@@ -62,6 +62,7 @@ def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model,
     top_file = f"{output_prefix}.top" 
     user_tasks_dict = {
             "pdb_validation": f"Check if the {str(os.path.abspath(pdb_file_path))} file has a valid PDB structure.",
+            "pdb_download": f"Complete only the following task and don't do anything else when completed: Download a structure from the Protein Data Bank. The structure id is {structure_id}. The Workspace is {workspace}",
             "pdb_analysis": f"Analyze the {str(os.path.abspath(pdb_file_path))} file.",
             "pulse_check": "Check if Gromacs in installed.",
             "conversion_to_gro": f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",
@@ -74,7 +75,7 @@ def get_user_task_dictionary(pdb_file_path, workspace, force_field, water_model,
     
     return user_tasks_dict
 
-def get_ollama_user_task_dictionary(pdb_file_path, workspace, force_field, water_model, box_size, concentration):
+def get_ollama_user_task_dictionary(pdb_file_path, workspace, force_field, water_model, box_size, concentration, structure_id):
     file_name_with_extension = os.path.basename(pdb_file_path)
     output_prefix, _ = os.path.splitext(file_name_with_extension) 
     gro_file = f"{output_prefix}.gro"
@@ -82,6 +83,7 @@ def get_ollama_user_task_dictionary(pdb_file_path, workspace, force_field, water
     top_file = f"{output_prefix}.top" 
     user_tasks_dict = {
             "pdb_validation": f"Check if the {str(os.path.abspath(pdb_file_path))} file has a valid PDB structure.",
+            "pdb_download": f"Complete only the following task and don't do anything else when completed: Download a structure from the Protein Data Bank. The structure id is {structure_id}. The Workspace is {workspace}",
             "pdb_analysis": f"Analyze the {str(os.path.abspath(pdb_file_path))} file.",
             "pulse_check": "Check if Gromacs in installed.",
             "conversion_to_gro": f"Convert the {pdb_file_path} file into Gromacs format. The Workspace is {workspace}",

@@ -1,4 +1,5 @@
 import argparse
+import sys
 import torch
 import prompt_utils
 from openinference.instrumentation.smolagents import SmolagentsInstrumentor
@@ -10,7 +11,7 @@ from smolagents import (CodeAgent, LiteLLMModel,
 from gmxsystools import (is_gromacs_installed, create_index_file, prepare_system_files, 
                          prepare_and_solvate_box, add_ions)
 from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png, gromacs_equilibration
-from pdbtools import is_pdb_valid, analyze_pdb_file
+from pdbtools import is_pdb_valid, download_from_protein_data_bank
 
 class GromacsMultiAgent():
     def __init__(self, args):
@@ -33,13 +34,15 @@ class GromacsMultiAgent():
             )
         
         # Define the PDB file analysis agent
-        pdb_analysis_agent = ToolCallingAgent(
-            name="pdb_analysis_agent",
-            description="This is an agent that can perform analysis of PDB files. It only does the analysis. It doesn't run any simulation.",
-            tools=[is_pdb_valid, analyze_pdb_file],
-            model=self.model,
+        pdb_management_agent = ToolCallingAgent(
+            name="pdb_management_agent",
+            description="This is an agent that can download protein structures from the Protein Data Bank and can also perform analysis of PDB files. It doesn't run any simulation.",
             max_steps=4,
+            tools=[is_pdb_valid, download_from_protein_data_bank],
+            model=self.model,
         )
+
+        pdb_management_agent.prompt_templates["final_answer"]["post_messages"] = prompt_utils.get_final_answer_prompt_template()
 
         # Define the system preparation agent
         system_configuration_agent = ToolCallingAgent(
@@ -75,9 +78,9 @@ class GromacsMultiAgent():
 
         # Define the Manager Agent
         self.manager_agent = CodeAgent(
-            tools=[],
+            tools=[download_from_protein_data_bank],
             model=self.model,
-            managed_agents=[pdb_analysis_agent, system_configuration_agent, box_preparation_agent, simulation_agent],
+            managed_agents=[pdb_management_agent, system_configuration_agent, box_preparation_agent, simulation_agent],
             additional_authorized_imports=['gromacsagent'],
         )
 
@@ -90,20 +93,23 @@ class GromacsMultiAgent():
         workspace = self.args.workspace
         box_size = self.args.box_size
         concentration = self.args.concentration
+        structure_id = self.args.structure_id
         if self.args.provider == "ollama":
             user_tasks_dict = prompt_utils.get_ollama_user_task_dictionary(pdb_file_path,
                                                                 workspace,
                                                                 force_field,
                                                                 water_model,
                                                                 box_size,
-                                                                concentration)
+                                                                concentration,
+                                                                structure_id)
         else:
             user_tasks_dict = prompt_utils.get_user_task_dictionary(pdb_file_path,
                                                                     workspace,
                                                                     force_field,
                                                                     water_model,
                                                                     box_size,
-                                                                    concentration)
+                                                                    concentration,
+                                                                    structure_id)
 
         task = self.args.task
         task_template = prompt_utils.get_specific_task_template(self.model_id, 
@@ -114,7 +120,7 @@ class GromacsMultiAgent():
 def main():
     parser = argparse.ArgumentParser(description="An AI Multi-Agent that handles Gromacs workflows.")
 
-    parser.add_argument("-pdb_file", type=str, required=True, help="The path and name of the starting PDB file.")
+    parser.add_argument("-pdb_file", type=str, default='', help="The path and name of the starting PDB file.")
     parser.add_argument("-force_field", type=str, default="amber99sb-ildn", help="The force field to use when preparing the simulation files.")
     parser.add_argument("-water_model", type=str, choices=['none', 'spc', 'spce', 'tip3p', 'tip4p', 'tip5p', 'tips3p'],
                         default="tip3p", help="The water model to use.")
@@ -122,7 +128,7 @@ def main():
     parser.add_argument("-concentration", type=float, default=0.15, help="The total salt concentration expressed in mol/L")
     parser.add_argument("-workspace", type=str, default=".", help="The directory where to store all the files for a simulation.")
     parser.add_argument("-task", type=str,  
-                        choices=['pdb_validation', 'pdb_analysis', 'pulse_check', 'conversion_to_gro', 'prepare_files',
+                        choices=['pdb_validation', 'pdb_download', 'pdb_analysis', 'pulse_check', 'conversion_to_gro', 'prepare_files',
                                  'generate_box', 'add_ions',
                                  'energy_minimization', 'plot_energy'], 
                         default="pulse_check", help="The task for the agent.")
@@ -137,8 +143,13 @@ def main():
                         help="Enables telemetry when set to True. Default is False.")
     parser.add_argument("-telemetry_server_url", type=str, default="http://0.0.0.0:6006/v1/traces",
                         help="The telemetry server URL. This argument is used only when telemetry is enabled")
-    
+    parser.add_argument("-structure_id", type=str, default='', help="The id of the structure to download from the Protein Data Bank.")
+
     args = parser.parse_args()
+
+    if args.pdb_file == '' and args.structure_id == '':
+        print('Please specify a PDB file location or a structure id to download from the Protein Data Banka.')
+        sys.exit(1)
 
     if args.telemetry:
         endpoint = args.telemetry_server_url

@@ -14,7 +14,7 @@ Seriuosly? If you are among the few dozens people in the world that have never h
 #### What's in this repo?
 This repo includes the source code of a concrete example implementation of Agentic AI built on top of a lightweight library and an Open Source Small Language Model. The final implementation would automate setup, simulation and analysis tasks performed through the Gromacs tool.   
 ## Custom Tools
-To date, the following tools for the Agent have been implemented:      
+To date, the following tools for the Agents have been implemented:      
 * *is_gromacs_installed*: to verify that a local Gromacs instance is available and running.
 * *convert_pdb_to_gromacs*: to convert a .pdb file into .gro format.
 * *create_index_file*: to create an index file for a given PDB file.
@@ -24,6 +24,8 @@ To date, the following tools for the Agent have been implemented:
 * *gromacs_energy_minimization*: to setup and run energy minimization.  
 * *plot_edr_to_png*: to plot an energy file (energy minimization or equilibration) and save the chart in PNG format.  
 * *gromacs_equilibration*: to setup and run equilibration.  
+* *download_from_protein_data_bank*: to download structures from the [Protein Data Bank](https://www.rcsb.org).  
+* *is_pdb_valid*: to verify if a given PDB file has a valide structure.  
 ## Warning
 This is still a work in progress and doesn't cover yet all the phases of MD simulations (see the roadmap image below): expect multiple changes to the code in the incoming weeks. Any constructive feedback is welcome.  
 ![Project_Roadmap](images/Gromacs_Smolagents_roadmap.png)
@@ -49,6 +51,7 @@ The Python requirements for this Agent are listed in the [requirements.txt](./re
 * Transformers
 * Accelerate  
 * Matplotlib  
+* Biopython
 * OpenTelemetry (for agent inspectability only)  
 #### Small Language Model (SLM) used
 ##### Local Models through the HF's Transformers API
@@ -75,15 +78,16 @@ python gromacs_multi_agent.py -pdb_file <path_to_the_pdb_file>
 The ```-h``` option prints to the standard output the help related to the full set of options for the script:  
 ```
 python gromacs_multi_agent.py -h                                                              
-usage: gromacs_multi_agent.py [-h] -pdb_file PDB_FILE [-force_field FORCE_FIELD]
-                        [-water_model {none,spc,spce,tip3p,tip4p,tip5p,tips3p}] [-box_size BOX_SIZE]
-                        [-concentration CONCENTRATION] [-workspace WORKSPACE]
-                        [-task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}]
-                        [-provider {transformers,ollama}] [-ollama_api_base OLLAMA_API_BASE]
-                        [-model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct,qwen2.5:3b}]
-                        [-telemetry TELEMETRY] [-telemetry_server_url TELEMETRY_SERVER_URL]
+usage: gromacs_multi_agent.py [-h] [-pdb_file PDB_FILE] [-force_field FORCE_FIELD]
+                              [-water_model {none,spc,spce,tip3p,tip4p,tip5p,tips3p}] [-box_size BOX_SIZE]
+                              [-concentration CONCENTRATION] [-workspace WORKSPACE]
+                              [-task {pdb_validation,pdb_download,pdb_analysis,pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}]
+                              [-provider {transformers,ollama}] [-ollama_api_base OLLAMA_API_BASE]
+                              [-model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct,qwen2.5:3b}]
+                              [-telemetry TELEMETRY] [-telemetry_server_url TELEMETRY_SERVER_URL]
+                              [-structure_id STRUCTURE_ID]
 
-An AI Agent that handles Gromacs workflows.
+An AI Multi-Agent that handles Gromacs workflows.
 
 options:
   -h, --help            show this help message and exit
@@ -96,7 +100,7 @@ options:
   -concentration CONCENTRATION
                         The total salt concentration expressed in mol/L
   -workspace WORKSPACE  The directory where to store all the files for a simulation.
-  -task {pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}
+  -task {pdb_validation,pdb_download,pdb_analysis,pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}
                         The task for the agent.
   -provider {transformers,ollama}
                         The provider type to use for inference.
@@ -107,6 +111,8 @@ options:
   -telemetry TELEMETRY  Enables telemetry when set to True. Default is False.
   -telemetry_server_url TELEMETRY_SERVER_URL
                         The telemetry server URL. This argument is used only when telemetry is enabled
+  -structure_id STRUCTURE_ID
+                        The id of the structure to download from the Protein Data Bank.
 
 ```  
 To execute the old version of the tool (single agent based), you need to run the ```gromacs_agent.py``` script. Its syntax is exactly the same as for the multi-agent version.  

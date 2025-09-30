@@ -3,6 +3,8 @@ An HF's Smolagent to automate molecular dynamics simulations using GROMACS.
 :point_right: :point_right: :point_right: A presentation of this project will happen at the [BioTechX Europe 2025](https://www.terrapinn.com/conference/biotechx/index.stm) conference in Basel, Switzerland, on October 7th 2025. :point_left: :point_left: :point_left:  
   
 ![Gromacs Smolagent Landing Image](images/landing_image.png)
+## 🤝 Contributing
+Please open an issue for new requirements, provide feedback, spread the word and leave a star if you like it.  
 #### What is Gromacs?
 [Gromacs](https://www.gromacs.org) is a popular, free and open-source software suite for high-performance molecular dynamics and output analysis.  
 #### What is molecular dynamics?

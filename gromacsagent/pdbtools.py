@@ -56,6 +56,38 @@ def download_from_protein_data_bank(structure_id:str, workspace:str = ".") -> bo
     return has_file_been_downloaded
 
 @tool
+def remove_water_molecules(pdb_file: str, workspace:str = ".") -> bool:
+    """Remove water molecules from a PDB file.
+
+    Args:
+        pdb_file: The name of the input PDB file.
+        workspace: The directory where to find the input PDB file.
+
+    Returns:
+        True if the water molecules have been successfully removed, False otherwise.
+    """
+    is_water_removed = False
+
+    workspace_absolute_path = os.path.abspath(workspace)
+    parser = PDBParser(QUIET=True)
+    structure = parser.get_structure("protein", os.path.join(workspace_absolute_path, pdb_file))
+
+    for model in structure:
+        for chain in list(model):
+            for residue in list(chain):
+                if residue.get_resname() == "HOH":
+                    chain.detach_child(residue.id)
+                  
+    # Save the cleaned structure
+    io = PDBIO()
+    io.set_structure(structure)
+    output_file = os.path.join(workspace_absolute_path, pdb_file)
+    io.save(output_file)
+    is_water_removed = True
+
+    return is_water_removed
+
+@tool
 def analyze_pdb_file(pdb_file: str) -> tuple[list, list, list]:
     """Perform analysis of a PDB file.
 

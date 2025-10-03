@@ -84,7 +84,7 @@ python gromacs_multi_agent.py -h
 usage: gromacs_multi_agent.py [-h] [-pdb_file PDB_FILE] [-force_field FORCE_FIELD]
                               [-water_model {none,spc,spce,tip3p,tip4p,tip5p,tips3p}] [-box_size BOX_SIZE]
                               [-concentration CONCENTRATION] [-workspace WORKSPACE]
-                              [-task {pdb_validation,pdb_download,pdb_analysis,pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}]
+                              [-task {pdb_validation,pdb_download,pdb_analysis,remove_water,pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}]
                               [-provider {transformers,ollama}] [-ollama_api_base OLLAMA_API_BASE]
                               [-model {Qwen/Qwen2.5-3B-Instruct,Qwen/Qwen2.5-1.5B-Instruct,qwen2.5:3b}]
                               [-telemetry TELEMETRY] [-telemetry_server_url TELEMETRY_SERVER_URL]
@@ -103,7 +103,7 @@ options:
   -concentration CONCENTRATION
                         The total salt concentration expressed in mol/L
   -workspace WORKSPACE  The directory where to store all the files for a simulation.
-  -task {pdb_validation,pdb_download,pdb_analysis,pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}
+  -task {pdb_validation,pdb_download,pdb_analysis,remove_water,pulse_check,conversion_to_gro,prepare_files,generate_box,add_ions,energy_minimization,plot_energy}
                         The task for the agent.
   -provider {transformers,ollama}
                         The provider type to use for inference.

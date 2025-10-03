@@ -11,7 +11,7 @@ from smolagents import (CodeAgent, LiteLLMModel,
 from gmxsystools import (is_gromacs_installed, create_index_file, prepare_system_files, 
                          prepare_and_solvate_box, add_ions)
 from gmxsimtools import gromacs_energy_minimization, plot_edr_to_png, gromacs_equilibration
-from pdbtools import is_pdb_valid, download_from_protein_data_bank
+from pdbtools import is_pdb_valid, download_from_protein_data_bank, remove_water_molecules
 
 class GromacsMultiAgent():
     def __init__(self, args):
@@ -38,7 +38,7 @@ class GromacsMultiAgent():
             name="pdb_management_agent",
             description="This is an agent that can download protein structures from the Protein Data Bank and can also perform analysis of PDB files. It doesn't run any simulation.",
             max_steps=4,
-            tools=[is_pdb_valid, download_from_protein_data_bank],
+            tools=[is_pdb_valid, download_from_protein_data_bank, remove_water_molecules],
             model=self.model,
         )
 
@@ -128,7 +128,7 @@ def main():
     parser.add_argument("-concentration", type=float, default=0.15, help="The total salt concentration expressed in mol/L")
     parser.add_argument("-workspace", type=str, default=".", help="The directory where to store all the files for a simulation.")
     parser.add_argument("-task", type=str,  
-                        choices=['pdb_validation', 'pdb_download', 'pdb_analysis', 'pulse_check', 'conversion_to_gro', 'prepare_files',
+                        choices=['pdb_validation', 'pdb_download', 'pdb_analysis', 'remove_water', 'pulse_check', 'conversion_to_gro', 'prepare_files',
                                  'generate_box', 'add_ions',
                                  'energy_minimization', 'plot_energy'], 
                         default="pulse_check", help="The task for the agent.")

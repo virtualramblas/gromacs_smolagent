@@ -29,6 +29,8 @@ To date, the following tools for the Agents have been implemented:
 * *download_from_protein_data_bank*: to download structures from the [Protein Data Bank](https://www.rcsb.org).  
 * *is_pdb_valid*: to verify if a given PDB file has a valide structure.  
 * *remove_water_molecules*: to remove water molecules from a PDB structure.  
+  
+You can see some examples of this Agentic AI solution in action in the [gallery](docs/Gallery.md).
 ## Warning
 This is still a work in progress and doesn't cover yet all the phases of MD simulations (see the roadmap image below): expect multiple changes to the code in the incoming weeks. Any constructive feedback is welcome.  
 ![Project_Roadmap](images/Gromacs_Smolagents_roadmap.png)

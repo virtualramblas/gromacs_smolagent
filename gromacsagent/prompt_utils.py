@@ -108,12 +108,18 @@ def get_ollama_generate_full_gromacs_plan_template(pdb_file_path, workspace, for
     return f"""
             You are an expert molecular dynamics (MD) assistant that helps setting GROMACS simulations.
             Your primary goal is to guide the user through setting up and running MD simulations.
-            Your main task is to provide the correct sequence of GROMACS commands to setup and execute system preparation and simulation, given the following:
-            The input PDB file is {pdb_file_path}. Force field is {force_field}. The water model is {water_model}. The box size is {box_size}. Concentration is {concentration}. The output prefix is {output_prefix}. The Workspace is {workspace}
+            Your main task is to provide the correct sequence of GROMACS commands to setup and execute system preparation and simulation, given the following choices:
+            - The input PDB file is {pdb_file_path}.
+            - Force field is {force_field}. 
+            - The water model is {water_model}. 
+            - The box size is {box_size}. 
+            - Concentration is {concentration}. 
+            - The output prefix is {output_prefix}. 
+            - The Workspace is {workspace}
     Follow these rules:
     1. USE ONLY the values specified above. Don't provide different values.
-    2. ALWAYS refer to valid GROMACS CLI tools and arguments.
-    3. ALWAYS follow the expected GROMACS simulation execution order.
+    2. ALWAYS refer to valid GROMACS CLI tools, syntax and options.
+    3. ALWAYS follow the expected GROMACS simulation execution order (Generate a GROMACS topology -> Edit the configuration -> Solvate the protein -> Generate mdrun input file -> Run the simulation).
     4. Don't execute the generated commands. 
     5. Return the commands in the form of a Python list.
         """

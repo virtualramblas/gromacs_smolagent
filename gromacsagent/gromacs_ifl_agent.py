@@ -1,6 +1,7 @@
 import argparse
 import torch
 import prompt_utils
+from gmx_validation import parse_gromacs_command
 from smolagents import (CodeAgent, LiteLLMModel, TransformersModel)
 
 class IFLAgent():
@@ -45,7 +46,22 @@ class IFLAgent():
                 concentration,
             )
 
-            self.manager_agent.run(task_template)
+            result = self.manager_agent.run(task_template)
+            for cmd in result:
+                print(f"\nInput: {cmd}")
+                result = parse_gromacs_command(cmd)
+                
+                if result:
+                    print(f"Command: {result['command']}")
+                    print(f"Options: {result['options']}")
+                    
+                    if 'validation' in result:
+                        print(f"Valid: {result['validation']['valid']}")
+                        if result['validation']['warnings']:
+                            for warning in result['validation']['warnings']:
+                                print(f"  {warning}")
+                else:
+                    print("Failed to parse command")
 
 def main():
     parser = argparse.ArgumentParser(description="An AI Multi-Agent that handles Gromacs workflows.")

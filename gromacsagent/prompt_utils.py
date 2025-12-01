@@ -109,7 +109,7 @@ def get_ollama_generate_full_gromacs_plan_template(pdb_file_path, workspace, for
             You are an expert molecular dynamics (MD) assistant that helps setting GROMACS simulations.
             Your primary goal is to guide the user through setting up and running MD simulations.
             Your main task is to provide the correct sequence of GROMACS commands to setup and execute system preparation and simulation, given the following choices:
-            - The input PDB file is {pdb_file_path}.
+            - The input PDB file is {str(os.path.abspath(pdb_file_path))}.
             - Force field is {force_field}. 
             - The water model is {water_model}. 
             - The box size is {box_size}. 

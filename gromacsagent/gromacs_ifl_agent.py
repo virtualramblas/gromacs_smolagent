@@ -47,21 +47,26 @@ class IFLAgent():
             )
 
             result = self.manager_agent.run(task_template)
+            generated_commands = {}
             for cmd in result:
-                print(f"\nInput: {cmd}")
-                result = parse_gromacs_command(cmd)
-                
-                if result:
-                    print(f"Command: {result['command']}")
-                    print(f"Options: {result['options']}")
-                    
-                    if 'validation' in result:
-                        print(f"Valid: {result['validation']['valid']}")
-                        if result['validation']['warnings']:
-                            for warning in result['validation']['warnings']:
-                                print(f"  {warning}")
-                else:
-                    print("Failed to parse command")
+                try:
+                    print(f"\nInput: {cmd}")
+                    result = parse_gromacs_command(cmd)
+                    if result:
+                        print(f"Command: {result['command']}")
+                        print(f"Options: {result['options']}")
+                        
+                        if 'validation' in result:
+                            print(f"Valid: {result['validation']['valid']}")
+                            if result['validation']['warnings']:
+                                for warning in result['validation']['warnings']:
+                                    print(f"  {warning}")
+                            generated_commands.update({cmd: result['validation']['valid']})
+                except Exception as e:
+                    print(f"Runtime error: {str(e)}")
+                    generated_commands.update({cmd: "Valid: False"})
+            print(generated_commands)
+            
 
 def main():
     parser = argparse.ArgumentParser(description="An AI Multi-Agent that handles Gromacs workflows.")

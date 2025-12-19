@@ -45,25 +45,35 @@ class IFLAgent():
                 box_size,
                 concentration,
             )
+        else:
+            task_template = prompt_utils.get_generate_full_gromacs_plan_template(
+                pdb_file_path,
+                workspace,
+                force_field,
+                water_model,
+                box_size,
+                concentration,
+            )
 
-            result = self.manager_agent.run(task_template)
-            generated_commands = {}
-            for cmd in result:
-                print(f"\nInput: {cmd}")
-                result = parse_gromacs_command(cmd)
-                if result is not None:
-                    print(f"Command: {result['command']}")
-                    print(f"Options: {result['options']}")
-                    
-                    if 'validation' in result:
-                        print(f"Valid: {result['validation']['valid']}")
-                        if result['validation']['warnings']:
-                            for warning in result['validation']['warnings']:
-                                print(f"  {warning}")
-                        generated_commands.update({cmd: result['validation']['valid']})
-                else:
-                    generated_commands.update({cmd: "Valid: False"})
-            print(generated_commands)
+        result = self.manager_agent.run(task_template)
+        generated_commands = {}
+        for cmd in result:
+            print(f"\nInput: {cmd}")
+            result = parse_gromacs_command(cmd)
+            if result is not None:
+                print(f"Command: {result['command']}")
+                print(f"Options: {result['options']}")
+                
+                if 'validation' in result:
+                    print(f"Valid: {result['validation']['valid']}")
+                    if result['validation']['warnings']:
+                        for warning in result['validation']['warnings']:
+                            print(f"  {warning}")
+                    generated_commands.update({cmd: result['validation']['valid']})
+            else:
+                generated_commands.update({cmd: "Valid: False"})
+            
+        print(generated_commands)
             
 
 def main():

@@ -101,6 +101,29 @@ def get_ollama_user_task_dictionary(pdb_file_path, workspace, force_field, water
 def get_final_answer_prompt_template():
     return "Based on the above, please provide an answer to the given task. Always answer in user-readable text, don't use json."
 
+def get_generate_full_gromacs_plan_template(pdb_file_path, workspace, force_field, water_model, box_size, concentration):
+    file_name_with_extension = os.path.basename(pdb_file_path)
+    output_prefix, _ = os.path.splitext(file_name_with_extension) 
+    
+    return f"""
+            You are an expert molecular dynamics (MD) assistant that helps setting GROMACS simulations.
+            Your primary goal is to guide the user through setting up and running MD simulations.
+            Your main task is to provide the correct sequence of GROMACS commands to setup and execute system preparation and simulation, given the following choices:
+            - The input PDB file is {str(os.path.abspath(pdb_file_path))}.
+            - Force field is {force_field}. 
+            - The water model is {water_model}. 
+            - The box size is {box_size}. 
+            - Concentration is {concentration}. 
+            - The output prefix is {output_prefix}. 
+            - The Workspace is {workspace}
+    Follow these rules:
+    1. USE ONLY the values specified above. Don't provide different values.
+    2. ALWAYS refer to valid GROMACS CLI tools, syntax and options.
+    3. ALWAYS follow the expected GROMACS simulation execution order (Generate a GROMACS topology -> Edit the configuration -> Solvate the protein -> Generate mdrun input file -> Run the simulation).
+    4. Don't execute the generated commands. 
+    5. Return the commands in the form of a Python list.
+        """
+
 def get_ollama_generate_full_gromacs_plan_template(pdb_file_path, workspace, force_field, water_model, box_size, concentration):
     file_name_with_extension = os.path.basename(pdb_file_path)
     output_prefix, _ = os.path.splitext(file_name_with_extension) 

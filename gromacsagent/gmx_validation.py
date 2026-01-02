@@ -8,11 +8,6 @@ import ply.lex as lex
 import ply.yacc as yacc
 from typing import Dict, List, Any, Optional
 
-
-# ============================================================================
-# LEXER
-# ============================================================================
-
 class GromacsLexer:
     """Lexer for GROMACS command-line interface"""
     
@@ -118,11 +113,6 @@ class GromacsLexer:
             tokens.append(tok)
         return tokens
 
-
-# ============================================================================
-# PARSER
-# ============================================================================
-
 class GromacsParser:
     """Parser for GROMACS command-line interface"""
     
@@ -210,11 +200,6 @@ class GromacsParser:
         result = self.parser.parse(data, lexer=self.lexer.lexer)
         return result
 
-
-# ============================================================================
-# COMMAND VALIDATOR
-# ============================================================================
-
 class GromacsCommandValidator:
     """Validates parsed GROMACS commands based on workflow requirements"""
     
@@ -267,11 +252,6 @@ class GromacsCommandValidator:
                 warnings.append("Warning: 'mdrun' requires -s (TPR file) or -deffnm")
         
         return len(warnings) == 0 or all('Warning' in w for w in warnings), warnings
-
-
-# ============================================================================
-# MAIN INTERFACE
-# ============================================================================
 
 def parse_gromacs_command(command_string: str, validate: bool = True) -> Optional[Dict[str, Any]]:
     """

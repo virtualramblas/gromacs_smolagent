@@ -24,8 +24,8 @@ def is_pdb_valid(pdb_file: str) -> bool:
     try:
         parser.get_structure(file_name, pdb_file)
         is_valid_pdb = True
-    except:
-        print("The provided PDB file has an invalid structure.")
+    except Exception as e:
+        print(f"The provided PDB file has an invalid structure. {3}")
 
     return is_valid_pdb
 
@@ -50,8 +50,8 @@ def download_from_protein_data_bank(structure_id:str, workspace:str = ".") -> bo
                             overwrite=True)
         os.rename("pdb" + structure_id + ".ent", structure_id + ".pdb")
         has_file_been_downloaded = True
-    except:
-        print(f"Failed to download the {structure_id} PDB file")
+    except Exception as e:
+        print(f"Failed to download the {structure_id} PDB file. {e}")
 
     return has_file_been_downloaded
 

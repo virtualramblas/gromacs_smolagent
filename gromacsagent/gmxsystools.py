@@ -112,7 +112,7 @@ def prepare_system_files(pdb_file: str, output_prefix: str='', force_field: str=
                             '-i', os.path.join(workspace, itp_file), 
                             '-p', os.path.join(workspace, top_file), 
                             '-ff', force_field, '-ignh', '-heavyh', '-water', water_model], check=True)
-            print(f"Successfully prepared files for GMX.")
+            print("Successfully prepared files for GMX.")
             is_success = True
         except FileNotFoundError:
             print("Error: 'gmx' command not found. Make sure Gromacs is installed and in your PATH.")

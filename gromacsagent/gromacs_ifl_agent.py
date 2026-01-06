@@ -59,6 +59,8 @@ class IFLAgent():
         generated_commands = {}
         for cmd in result:
             print(f"\nInput: {cmd}")
+            if not isinstance(cmd, str):
+                continue
             result = parse_gromacs_command(cmd)
             if result is not None:
                 print(f"Command: {result['command']}")
@@ -75,7 +77,6 @@ class IFLAgent():
             
         print(generated_commands)
             
-
 def main():
     parser = argparse.ArgumentParser(description="An AI Multi-Agent that handles Gromacs workflows.")
 

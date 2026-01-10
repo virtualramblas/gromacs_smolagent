@@ -10,23 +10,23 @@ This project has been presented at the [BioTechX Europe 2025](https://www.terrap
 ## 🤝 Contributing
 Please open an issue for new requirements, provide feedback, spread the word and leave a star if you like it.  
 # Table of contents
-[What is Gromacs?](README.md#what-is-gromacs)  
-[What is molecular dynamics?](README.md#what-is-molecular-dynamics)  
-[What is Smolagents?](README.md#what-is-smolagents)  
-[What is Hugging Face?](README.md#what-is-hugging-face)  
-[What's in this repo?](README.md#whats-in-this-repo)  
-[Custom Tools](README.md#custom-tools)  
-[Warning](README.md#warning)  
-[Usage](README.md#usage)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Prerequisites](README.md#prerequisites)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Installation](README.md#installation)  
+[What is Gromacs?](./README.md#what-is-gromacs)  
+[What is molecular dynamics?](./README.md#what-is-molecular-dynamics)  
+[What is Smolagents?](./README.md#what-is-smolagents)  
+[What is Hugging Face?](./README.md#what-is-hugging-face)  
+[What's in this repo?](./README.md#whats-in-this-repo)  
+[Custom Tools](./README.md#custom-tools)  
+[Warning](./README.md#warning)  
+[Usage](./README.md#usage)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Prerequisites](./README.md#prerequisites)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Installation](./README.md#installation)  
 &nbsp;&nbsp;&nbsp;&nbsp;[Virtual environment setup](README.md#virtual-environment-setup)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Small Language Model (SLM) used](README.md#small-language-model-slm-used)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Local Models through the HF's Transformers API](README.md#local-models-through-the-hfs-transformers-api)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Small Language Model (SLM) used](./README.md#small-language-model-slm-used)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Local Models through the HF's Transformers API](./README.md#local-models-through-the-hfs-transformers-api)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Local Models through Ollama](README.md#local-models-through-ollama)  
-&nbsp;&nbsp;&nbsp;&nbsp;[CLI Execution](README.md#cli-execution)  
-&nbsp;&nbsp;&nbsp;&nbsp;[Agent Inspectability](README.md#agent-inspectability)  
-[UI](README.md#ui)  
+&nbsp;&nbsp;&nbsp;&nbsp;[CLI Execution](./README.md#cli-execution)  
+&nbsp;&nbsp;&nbsp;&nbsp;[Agent Inspectability](./README.md#agent-inspectability)  
+[UI](./README.md#ui)  
 #### What is Gromacs?
 [Gromacs](https://www.gromacs.org) is a popular, free and open-source software suite for high-performance molecular dynamics and output analysis.  
 #### What is molecular dynamics?

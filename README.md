@@ -9,6 +9,7 @@ This project has been presented at the [BioTechX Europe 2025](https://www.terrap
   
 ## 🤝 Contributing
 Please open an issue for new requirements, provide feedback, spread the word and leave a star if you like it.  
+![Please give this repo a star!](images/give_a_star.png)
 # Table of contents
 [What is Gromacs?](#what-is-gromacs)  
 [What is molecular dynamics?](#what-is-molecular-dynamics)  

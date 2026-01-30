@@ -20,14 +20,17 @@ class IFLAgent():
                     model_id='ollama_chat/' + self.model_id,
                     api_base=args.ollama_api_base,  
                     api_key="",
-                    num_ctx=8192,
+                    num_ctx=8192*2,
                     temperature=0.1)
         
         self.manager_agent = CodeAgent(
             tools=[],
             model=self.model,
             managed_agents=[],
+            max_steps=2,
         )
+        
+        self.manager_agent.prompt_templates["final_answer"]["post_messages"] = prompt_utils.get_final_answer_prompt_template()
 
     def run_agent(self):
         MAX_RETRIES = 3

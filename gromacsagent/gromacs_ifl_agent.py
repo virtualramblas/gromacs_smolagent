@@ -11,8 +11,8 @@ class IFLAgent():
         if args.provider == "transformers":
             self.model = TransformersModel(self.model_id,
                                     device_map="auto",
-                                    max_new_tokens=200,
-                                    torch_dtype=torch.float16,
+                                    max_new_tokens=600,
+                                    dtype=torch.float16,
                                     do_sample=True,
                                     temperature=0.1)
         else:

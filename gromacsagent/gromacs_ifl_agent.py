@@ -1,7 +1,6 @@
 import argparse
-import torch
 import prompt_utils
-from gmx_validation import parse_gromacs_command
+from gmx_validation import parse_gromacs_command, validate_gromacs_sequence
 from smolagents import (CodeAgent, LiteLLMModel, TransformersModel)
 
 class IFLAgent():
@@ -12,7 +11,6 @@ class IFLAgent():
             self.model = TransformersModel(self.model_id,
                                     device_map="auto",
                                     max_new_tokens=600,
-                                    dtype=torch.float16,
                                     do_sample=True,
                                     temperature=0.1)
         else:
@@ -105,6 +103,13 @@ class IFLAgent():
                 else:
                     current_attempt_valid = False
                     current_attempt_feedback.append(f"""Command '{cmd}' failed parsing.""")
+
+            # --- NEW: Validate the sequence of generated commands ---
+            is_sequence_valid, sequence_feedback = validate_gromacs_sequence(temp_generated_commands)
+            if not is_sequence_valid:
+                current_attempt_valid = False
+                current_attempt_feedback.append(f"Sequence validation error: {sequence_feedback}")
+            # --- END NEW ---
 
             if current_attempt_valid:
                 all_commands_valid = True

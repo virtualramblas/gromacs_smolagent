@@ -277,3 +277,53 @@ def parse_gromacs_command(command_string: str, validate: bool = True) -> Optiona
         }
     
     return result
+
+def validate_gromacs_sequence(command_list):
+    """
+    Validates if a list of GROMACS commands follows a specific sequence.
+
+    Args:
+        command_list (list): A list of strings, where each string is a GROMACS command.
+
+    Returns:
+        tuple: (bool, str) - True if valid, False otherwise, and a suggestion/feedback message.
+    """
+    required_steps = [
+        {"name": "Generate a GROMACS topology", "keywords": ["pdb2gmx", "topology", "forcefield"]},
+        {"name": "Edit the configuration", "keywords": ["editconf", "box", "periodic"]},
+        {"name": "Solvate the protein", "keywords": ["solvate", "water"]},
+        {"name": "Generate mdrun input file", "keywords": ["grompp", "mdp"]},
+        {"name": "Run the simulation", "keywords": ["mdrun", "simulation"]}
+    ]
+
+    # Track the last identified step index
+    last_step_found_idx = -1
+    identified_steps_in_order = []
+
+    for i, step in enumerate(required_steps):
+        step_name = step["name"]
+        step_keywords = step["keywords"]
+
+        found_this_step = False
+        # Search for the step's keywords in the commands *after* the last found step
+        for j in range(last_step_found_idx + 1, len(command_list)):
+            command = command_list[j].lower()
+            if any(keyword in command for keyword in step_keywords):
+                identified_steps_in_order.append(step_name)
+                last_step_found_idx = j
+                found_this_step = True
+                break
+
+        if not found_this_step:
+            # If a step is missing or out of order, it's invalid
+            missing_step_message = (
+                f"Missing or out-of-order step: '{step_name}'. "
+                f"Expected to find a command related to '{step_keywords[0]}' after '{identified_steps_in_order[-1]}' (if any previous step was found). "
+                f"The current sequence found is: {identified_steps_in_order}"
+            )
+            return False, missing_step_message
+
+    if len(identified_steps_in_order) == len(required_steps):
+        return True, "All GROMACS steps are present and in the correct order."
+    else:
+        return False, "Not all required GROMACS steps were identified in the correct sequence."

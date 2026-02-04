@@ -318,8 +318,7 @@ def validate_gromacs_sequence(command_list):
             # If a step is missing or out of order, it's invalid
             missing_step_message = (
                 f"Missing or out-of-order step: '{step_name}'. "
-                f"Expected to find a command related to '{step_keywords[0]}' after '{identified_steps_in_order[-1]}' (if any previous step was found). "
-                f"The current sequence found is: {identified_steps_in_order}"
+                f"The current correct partial sequence is: {identified_steps_in_order}"
             )
             return False, missing_step_message
 

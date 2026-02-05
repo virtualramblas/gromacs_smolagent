@@ -88,6 +88,7 @@ The models that the Agent can use are:
 * [Qwen 2.5 1.5B Instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct), in FP 16 format.  
   
 To date, these are those providing the best performance. The evaluation process of other models is still ongoing. The Qwen 2.5 models above require hardware acceleration (NVIDA GPU or Apple Silicon) with minimum 8 GB VRAM. 16 GB VRAM preferable for the 3B version, to have a smoother experience. The model checkpoints are automatically downloaded from the HF's Hub at the first tool execution. They are then cached in the local machine (no need to be connected to the web for any further run, when sticking to the same model).  
+**Update February 5th 2026**: tests in progress to assess the performance of the Qwen 2.5 3B Instruct model after 8-bit and 4-bit quantization. Results would be shared soon.  
 ##### Local Models through Ollama
 This option is suitable for local machines where no GPU is available or the local GPU has no more than 8 GB VRAM.  
 The models that the Agent can use are:
